@@ -16,6 +16,9 @@ async function handleApi(request, env, url) {
     if (request.method === "POST" && path === "/chat") {
       return json(await chat(request, env));
     }
+    if (request.method === "POST" && path === "/refine") {
+      return json(await refine(request, env));
+    }
     if (request.method === "POST" && path === "/submit") {
       return json(await submit(request, env));
     }
@@ -72,6 +75,11 @@ async function submit(request, env) {
     },
     brief: input.brief || {},
     preview: input.preview || {},
+    quizAnswers: input.quizAnswers || {},
+    developmentBriefing: {
+      subject: text(input.developmentBriefing?.subject, "", 220),
+      body: longText(input.developmentBriefing?.body, "", 8000)
+    },
     notes: text(input.notes, "", 1000),
     createdAt: Date.now()
   };
@@ -84,6 +92,17 @@ async function submit(request, env) {
   }
 
   return { ok: true, id: submission.id, emailed };
+}
+
+async function refine(request, env) {
+  if (!env.OPENAI_API_KEY) throw error("OPENAI_API_KEY nao configurada.", 500);
+  const input = await readJson(request);
+  const themes = await callOpenAIThemeRefine(env, {
+    baseTheme: input.baseTheme || {},
+    userDescription: text(input.userDescription, "", 1200),
+    quizAnswers: input.quizAnswers || {}
+  });
+  return { ok: true, themes };
 }
 
 async function callOpenAI(env, messages, currentBrief) {
@@ -121,6 +140,41 @@ async function callOpenAI(env, messages, currentBrief) {
   return JSON.parse(text);
 }
 
+async function callOpenAIThemeRefine(env, input) {
+  const response = await fetch("https://api.openai.com/v1/responses", {
+    method: "POST",
+    headers: {
+      "authorization": `Bearer ${env.OPENAI_API_KEY}`,
+      "content-type": "application/json"
+    },
+    body: JSON.stringify({
+      model: env.OPENAI_MODEL || "gpt-4.1-mini",
+      input: [
+        { role: "system", content: [{ type: "input_text", text: themeRefinePrompt() }] },
+        { role: "user", content: [{ type: "input_text", text: JSON.stringify(input, null, 2) }] }
+      ],
+      text: {
+        format: {
+          type: "json_schema",
+          name: "theme_refinement_response",
+          strict: true,
+          schema: themeRefineSchema()
+        }
+      },
+      max_output_tokens: 1600
+    })
+  });
+
+  if (!response.ok) {
+    const detail = await response.text();
+    throw error(`Falha na OpenAI: ${detail}`, 502);
+  }
+
+  const payload = await response.json();
+  const parsed = JSON.parse(extractOutputText(payload));
+  return parsed.themes || [];
+}
+
 function systemPrompt() {
   return `Voce e o Agente Festeiro, um concierge de autosservico para maes e pais criarem sites e convites digitais de festas infantis.
 
@@ -145,6 +199,24 @@ Regras:
 - Gere uma resposta JSON estrita no schema pedido.
 - Atualize o briefing a cada resposta.
 - O preview deve ficar cada vez mais especifico conforme a conversa evolui.`;
+}
+
+function themeRefinePrompt() {
+  return `Voce e um consultor de festas infantis no Brasil.
+
+Tarefa:
+- Gerar no maximo 3 temas refinados a partir do tema base, respostas do questionario e uma frase sobre a crianca.
+- Ser pratico, acolhedor e objetivo.
+- Priorizar ideias possiveis de executar no Brasil.
+- Adaptar a idade e ao local.
+- Se o orcamento for baixo, evitar ideias caras.
+- Se for em escola, casa ou condominio, sugerir execucao simples.
+- Nao assumir genero.
+- Nao pedir nome completo nem dados sensiveis.
+- Evitar depender de personagem licenciado; quando necessario, sugerir uma direcao inspirada, nao oficial.
+- Nao sugerir ideias mirabolantes.
+
+Responda somente no JSON do schema.`;
 }
 
 function responseSchema() {
@@ -204,13 +276,43 @@ function responseSchema() {
   };
 }
 
+function themeRefineSchema() {
+  return {
+    type: "object",
+    additionalProperties: false,
+    required: ["themes"],
+    properties: {
+      themes: {
+        type: "array",
+        maxItems: 3,
+        items: {
+          type: "object",
+          additionalProperties: false,
+          required: ["name", "concept", "palette", "decorIdea", "guestInteraction", "partyFavor", "costLevel", "difficultyLevel", "viabilityNote"],
+          properties: {
+            name: { type: "string" },
+            concept: { type: "string" },
+            palette: { type: "array", items: { type: "string" }, maxItems: 5 },
+            decorIdea: { type: "string" },
+            guestInteraction: { type: "string" },
+            partyFavor: { type: "string" },
+            costLevel: { type: "string" },
+            difficultyLevel: { type: "string" },
+            viabilityNote: { type: "string" }
+          }
+        }
+      }
+    }
+  };
+}
+
 async function sendBriefingEmail(env, submission) {
   const fromName = env.RESEND_FROM_NAME || "Agente Festeiro";
   const from = `${fromName} <${env.RESEND_FROM_EMAIL}>`;
   const to = env.BRIEFING_TO_EMAIL || "contato@claudiocode.dev";
-  const subject = submission.kind === "production"
+  const subject = submission.developmentBriefing?.subject || (submission.kind === "production"
     ? `Producao 48h: ${submission.brief.childName || "nova festa"}`
-    : `Orcamento: ${submission.brief.childName || "nova festa"}`;
+    : `Orcamento: ${submission.brief.childName || "nova festa"}`);
   const response = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
@@ -234,12 +336,14 @@ async function sendBriefingEmail(env, submission) {
 function emailHtml(submission) {
   const brief = submission.brief || {};
   const preview = submission.preview || {};
+  const developmentBriefing = submission.developmentBriefing || {};
   return `<!doctype html><html><body style="font-family:Arial,sans-serif;color:#24151c">
     <h1>${submission.kind === "production" ? "Enviar para producao" : "Solicitar orcamento"}</h1>
     <p><b>ID:</b> ${submission.id}</p>
     <p><b>Contato:</b> ${escapeHtml(submission.contact.name)} | ${escapeHtml(submission.contact.email)} | ${escapeHtml(submission.contact.phone)}</p>
     <p><b>Buffet/codigo:</b> ${escapeHtml(submission.buffetCode || brief.buffet)}</p>
-    <h2>Resumo</h2><p>${escapeHtml(preview.productionSummary)}</p>
+    <h2>Briefing para avaliacao</h2><pre style="white-space:pre-wrap;background:#171018;color:#fff;padding:16px;border-radius:8px">${escapeHtml(developmentBriefing.body)}</pre>
+    <h2>Resumo</h2><p>${escapeHtml(preview.productionSummary || preview.conceptSummary)}</p>
     <h2>Briefing</h2><pre style="white-space:pre-wrap;background:#fff4f8;padding:16px;border-radius:8px">${escapeHtml(JSON.stringify(brief, null, 2))}</pre>
     <h2>Preview</h2><pre style="white-space:pre-wrap;background:#f6f7ff;padding:16px;border-radius:8px">${escapeHtml(JSON.stringify(preview, null, 2))}</pre>
   </body></html>`;
@@ -283,6 +387,10 @@ function json(body, status = 200) {
 
 function text(value, fallback = "", max = 200) {
   return String(value ?? fallback ?? "").trim().replace(/\s+/g, " ").slice(0, max);
+}
+
+function longText(value, fallback = "", max = 4000) {
+  return String(value ?? fallback ?? "").trim().slice(0, max);
 }
 
 function normalizeEmail(value) {
