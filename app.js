@@ -75,7 +75,7 @@ render();
 function loadState() {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
-    if (saved && typeof saved === "object") return { ...initialState, ...saved };
+    if (saved && typeof saved === "object") return { ...initialState, ...saved, screen: "home" };
   } catch {
     localStorage.removeItem(STORAGE_KEY);
   }
@@ -94,6 +94,12 @@ function setState(patch) {
 
 function resetFlow() {
   state = structuredClone(initialState);
+  saveState();
+  render();
+}
+
+function startPlanner() {
+  state = { ...structuredClone(initialState), screen: "quiz" };
   saveState();
   render();
 }
@@ -427,7 +433,7 @@ function handleClick(event) {
   const index = Number(target.dataset.index);
   const questionId = target.dataset.question;
 
-  if (action === "start") return setState({ screen: "quiz", questionIndex: 0 });
+  if (action === "start") return startPlanner();
   if (action === "reset") return resetFlow();
   if (action === "answer") return answerQuestion(questionId, value);
   if (action === "next-question") return nextQuestion();
