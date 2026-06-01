@@ -46,6 +46,22 @@ const questions = [
   }
 ];
 
+const featureModules = [
+  { id: "invite", name: "Convite digital", plan: "included", description: "Página inicial com tema, data, horário, local e contagem regressiva.", section: "Convite digital com contagem regressiva", interaction: "Compartilhamento simples do convite" },
+  { id: "rsvp", name: "RSVP por família", plan: "included", description: "Confirmação de presença com adultos, crianças pagantes e menores de 5.", section: "Confirmação de presença", interaction: "Contagem por família para os pais" },
+  { id: "gallery", name: "Fotos com aprovação", plan: "included", description: "Convidados enviam fotos e os pais aprovam antes de publicar.", section: "Galeria de fotos com aprovação", interaction: "Upload de fotos moderado" },
+  { id: "quiz", name: "Quiz da criança", plan: "included", description: "Perguntas rápidas para brincar com os convidados no dia da festa.", section: "Quiz sobre a criança", interaction: "Ranking leve do quiz" },
+  { id: "messages", name: "Mural de recados", plan: "included", description: "Mensagens dos convidados com aprovação dos pais.", section: "Mural de recados", interaction: "Recados afetivos para a família" },
+  { id: "capsule", name: "Cápsula do tempo", plan: "included", description: "Mensagens para a criança ler no futuro.", section: "Cápsula do tempo", interaction: "Pergunta afetiva para o futuro" },
+  { id: "album", name: "Álbum pós-festa", plan: "included", description: "Página de lembranças depois da festa, com fotos aprovadas.", section: "Álbum pós-festa", interaction: "Agradecimento pós-festa" },
+  { id: "screen", name: "Modo telão", plan: "evaluation", description: "Fotos, recados e ranking em uma tela durante o evento.", section: "Modo telão para o dia da festa", interaction: "Telão com recados, fotos e ranking" },
+  { id: "missions", name: "Missões da festa", plan: "evaluation", description: "Desafios simples para convidados criarem fotos e memórias.", section: "Missões da festa", interaction: "Missões guiadas para convidados" },
+  { id: "menu", name: "Cardápio", plan: "evaluation", description: "Cardápio do buffet ou da festa dentro do site.", section: "Cardápio", interaction: "Consulta rápida do cardápio" },
+  { id: "story", name: "História da criança", plan: "evaluation", description: "Linha do tempo, fotos e pequenos marcos da criança.", section: "História da criança", interaction: "Linha do tempo afetiva" },
+  { id: "customGame", name: "Jogo personalizado", plan: "evaluation", description: "Uma brincadeira digital sob medida para o tema.", section: "Jogo personalizado", interaction: "Mini jogo temático" },
+  { id: "messaging", name: "Disparos por WhatsApp/e-mail", plan: "evaluation", description: "Convites e lembretes enviados por canais oficiais.", section: "Convites e lembretes automatizados", interaction: "Mensagem de convite e lembrete" }
+];
+
 const initialState = {
   screen: "home",
   questionIndex: 0,
@@ -59,6 +75,7 @@ const initialState = {
   preview: null,
   briefing: null,
   briefingEditable: false,
+  selectedModules: [],
   contact: { name: "", email: "", phone: "", buffetCode: "" },
   loading: "",
   error: ""
@@ -111,6 +128,7 @@ function render() {
     suggestions: ThemeSuggestionsStep,
     refine: AIPersonalizationPanel,
     confirm: ThemeConfirmationStep,
+    features: FeatureSelectionStep,
     preview: ExperiencePreview,
     briefing: DevelopmentBriefingPreview
   }[state.screen]();
@@ -324,12 +342,91 @@ function ThemeConfirmationStep() {
   `, "Confirmação", 100);
 }
 
+function FeatureSelectionStep() {
+  const recommended = recommendedModuleIds(currentConfirmation(), state.answers);
+  const included = featureModules.filter(module => module.plan === "included");
+  const evaluation = featureModules.filter(module => module.plan === "evaluation");
+  const selected = selectedModuleDetails();
+  return StepShell(`
+    <div class="section-title">
+      <h2>Escolha os módulos</h2>
+      <p class="lead">O Agente Festeiro ajuda a entender o que faz sentido contratar agora e o que precisa ser avaliado pelo time.</p>
+    </div>
+    <section class="panel">
+      <div class="module-note">
+        <strong>Transparência antes do orçamento</strong>
+        <p>Os módulos marcados como incluídos entram no plano contratado. Os módulos em avaliação vão no briefing para o time analisar viabilidade, prazo e complexidade.</p>
+      </div>
+      <div class="cta-row compact">
+        <button class="button secondary" data-action="select-recommended-modules">Usar sugestão do agente</button>
+        <span class="micro">${recommended.length} módulos sugeridos para este perfil.</span>
+      </div>
+    </section>
+    <div class="module-columns">
+      <section>
+        <h3>Incluído no plano</h3>
+        <div class="module-grid">
+          ${included.map(module => FeatureModuleCard(module, recommended)).join("")}
+        </div>
+      </section>
+      <section>
+        <h3>Avaliado pelo time</h3>
+        <div class="module-grid">
+          ${evaluation.map(module => FeatureModuleCard(module, recommended)).join("")}
+        </div>
+      </section>
+    </div>
+    <section class="panel">
+      <h2>Resumo dos módulos</h2>
+      ${ModuleSummary(selected)}
+      <div class="cta-row">
+        <button class="button primary" data-action="continue-to-preview" ${state.selectedModules.length ? "" : "disabled"}>Gerar prévia com estes módulos</button>
+        <button class="button secondary" data-action="back-to-confirm">Voltar ao tema</button>
+      </div>
+    </section>
+  `, "Módulos", 100);
+}
+
+function FeatureModuleCard(module, recommended = []) {
+  const active = state.selectedModules.includes(module.id);
+  const suggested = recommended.includes(module.id);
+  return `
+    <button class="module-card ${active ? "active" : ""}" data-action="toggle-module" data-module="${module.id}">
+      <span class="module-badge ${module.plan}">${module.plan === "included" ? "Incluído" : "Avaliar"}</span>
+      <strong>${escapeHtml(module.name)}</strong>
+      <small>${escapeHtml(module.description)}</small>
+      ${suggested ? `<em>Sugestão do agente</em>` : ""}
+    </button>
+  `;
+}
+
+function ModuleSummary(modules) {
+  if (!modules.length) {
+    return `<p class="micro">Escolha pelo menos um módulo para a experiência. Você pode começar pelos sugeridos pelo agente.</p>`;
+  }
+  const included = modules.filter(module => module.plan === "included");
+  const evaluation = modules.filter(module => module.plan === "evaluation");
+  return `
+    <div class="module-summary">
+      <div>
+        <span class="module-badge included">Incluído</span>
+        <p>${included.length ? included.map(module => module.name).join(", ") : "Nenhum selecionado."}</p>
+      </div>
+      <div>
+        <span class="module-badge evaluation">Avaliar</span>
+        <p>${evaluation.length ? evaluation.map(module => module.name).join(", ") : "Nenhum selecionado."}</p>
+      </div>
+    </div>
+  `;
+}
+
 function ExperiencePreview() {
-  const preview = state.preview || generateExperiencePreview(currentConfirmation(), state.answers, state.aiPersonalization);
+  const preview = state.preview || generateExperiencePreview(currentConfirmation(), state.answers, state.aiPersonalization, state.selectedModules);
+  const modules = selectedModuleDetails();
   return StepShell(`
     <div class="section-title">
       <h2>Prévia da experiência</h2>
-      <p class="lead">Uma visão conceitual para o time avaliar o que dá para criar.</p>
+      <p class="lead">Uma visão conceitual com tema, módulos incluídos e módulos para avaliação.</p>
     </div>
     <section class="preview-hero">
       <h2>${escapeHtml(preview.experienceName)}</h2>
@@ -347,6 +444,10 @@ function ExperiencePreview() {
         <h2>Complexidade</h2>
         <p class="lead">${escapeHtml(preview.complexity)}</p>
         <p class="micro">${escapeHtml(preview.viabilityNotes)}</p>
+      </section>
+      <section class="panel">
+        <h2>Módulos escolhidos</h2>
+        ${ModuleSummary(modules)}
       </section>
       <section class="panel">
         <h2>Seções do site</h2>
@@ -367,13 +468,13 @@ function ExperiencePreview() {
     </div>
     <div class="cta-row">
       <button class="button primary" data-action="generate-briefing">Gerar briefing</button>
-      <button class="button secondary" data-action="back-to-confirm">Voltar e ajustar</button>
+      <button class="button secondary" data-action="back-to-features">Voltar aos módulos</button>
     </div>
   `, "Prévia", 100);
 }
 
 function DevelopmentBriefingPreview() {
-  const briefing = state.briefing || generateDevelopmentBriefing(currentConfirmation(), state.answers, state.aiPersonalization, state.preview);
+  const briefing = state.briefing || generateDevelopmentBriefing(currentConfirmation(), state.answers, state.aiPersonalization, state.preview, state.selectedModules);
   const disabled = state.briefingEditable ? "" : "disabled";
   return StepShell(`
     <div class="section-title">
@@ -422,8 +523,30 @@ function StepShell(content, label, progress) {
         <span class="step-pill">${escapeHtml(label)}</span>
       </header>
       <div class="progress" style="--progress:${Math.max(4, progress)}%"><span></span></div>
+      ${FlowRoadmap()}
       ${content}
     </section>
+  `;
+}
+
+function FlowRoadmap() {
+  const steps = [
+    { key: "quiz", label: "Dados" },
+    { key: "theme", label: "Tema" },
+    { key: "features", label: "Módulos" },
+    { key: "preview", label: "Prévia" },
+    { key: "briefing", label: "Envio" }
+  ];
+  const activeKey = ["suggestions", "refine", "confirm"].includes(state.screen) ? "theme" : state.screen;
+  const activeIndex = Math.max(0, steps.findIndex(step => step.key === activeKey));
+  return `
+    <nav class="flow-roadmap" aria-label="Etapas do assistente">
+      ${steps.map((step, index) => `
+        <span class="${index < activeIndex ? "done" : ""} ${index === activeIndex ? "active" : ""}">
+          <b>${index + 1}</b>${escapeHtml(step.label)}
+        </span>
+      `).join("")}
+    </nav>
   `;
 }
 
@@ -469,6 +592,10 @@ function handleClick(event) {
   if (action === "refine-current") return setState({ screen: "refine", selectedTheme: state.selectedTheme || currentConfirmation(), refinedThemes: [], error: "" });
   if (action === "confirm-theme") return confirmTheme();
   if (action === "back-to-confirm") return setState({ screen: "confirm" });
+  if (action === "toggle-module") return toggleModule(target.dataset.module);
+  if (action === "select-recommended-modules") return selectRecommendedModules();
+  if (action === "continue-to-preview") return continueToPreview();
+  if (action === "back-to-features") return setState({ screen: "features" });
   if (action === "generate-briefing") return generateBriefingStep();
   if (action === "back-to-preview") return setState({ screen: "preview" });
   if (action === "copy-briefing") return copyBriefing();
@@ -554,17 +681,38 @@ async function refineWithAI() {
 
 function confirmTheme() {
   const confirmation = currentConfirmation();
-  const preview = generateExperiencePreview(confirmation, state.answers, state.aiPersonalization);
-  setState({ screen: "preview", confirmation, preview, briefing: null });
+  const selectedModules = state.selectedModules.length ? state.selectedModules : recommendedModuleIds(confirmation, state.answers);
+  setState({ screen: "features", confirmation, selectedModules, preview: null, briefing: null });
+}
+
+function toggleModule(moduleId) {
+  if (!featureModules.some(module => module.id === moduleId)) return;
+  const selectedModules = state.selectedModules.includes(moduleId)
+    ? state.selectedModules.filter(id => id !== moduleId)
+    : [...state.selectedModules, moduleId];
+  setState({ selectedModules, preview: null, briefing: null });
+}
+
+function selectRecommendedModules() {
+  setState({
+    selectedModules: recommendedModuleIds(currentConfirmation(), state.answers),
+    preview: null,
+    briefing: null
+  });
+}
+
+function continueToPreview() {
+  const preview = generateExperiencePreview(currentConfirmation(), state.answers, state.aiPersonalization, state.selectedModules);
+  setState({ screen: "preview", preview, briefing: null });
 }
 
 function generateBriefingStep() {
-  const briefing = generateDevelopmentBriefing(currentConfirmation(), state.answers, state.aiPersonalization, state.preview);
+  const briefing = generateDevelopmentBriefing(currentConfirmation(), state.answers, state.aiPersonalization, state.preview, state.selectedModules);
   setState({ screen: "briefing", briefing, briefingEditable: false });
 }
 
 async function copyBriefing() {
-  const briefing = state.briefing || generateDevelopmentBriefing(currentConfirmation(), state.answers, state.aiPersonalization, state.preview);
+  const briefing = state.briefing || generateDevelopmentBriefing(currentConfirmation(), state.answers, state.aiPersonalization, state.preview, state.selectedModules);
   const text = `${briefing.subject}\n\n${briefing.body}`;
   try {
     await navigator.clipboard.writeText(text);
@@ -575,7 +723,7 @@ async function copyBriefing() {
 }
 
 async function sendEmail() {
-  const briefing = state.briefing || generateDevelopmentBriefing(currentConfirmation(), state.answers, state.aiPersonalization, state.preview);
+  const briefing = state.briefing || generateDevelopmentBriefing(currentConfirmation(), state.answers, state.aiPersonalization, state.preview, state.selectedModules);
   if (!state.contact.name || !state.contact.email) {
     showToast("Preencha nome e e-mail para retorno.");
     return;
@@ -589,6 +737,7 @@ async function sendEmail() {
       brief: currentConfirmation(),
       preview: state.preview,
       quizAnswers: state.answers,
+      featureModules: selectedModuleDetails(),
       developmentBriefing: briefing
     });
     setState({ loading: "" });
@@ -710,26 +859,25 @@ function generatePersonalizedThemes(baseTheme, userDescription, quizAnswers) {
   ];
 }
 
-function generateExperiencePreview(confirmedTheme, quizAnswers, aiPersonalization) {
+function generateExperiencePreview(confirmedTheme, quizAnswers, aiPersonalization, selectedModules = []) {
   const themeName = confirmedTheme.themeName || confirmedTheme.name || "Tema da festa";
   const experienceName = confirmedTheme.experienceName || `A festa ${themeName}`;
   const place = confirmedTheme.place || quizAnswers.place || "local a definir";
   const budget = confirmedTheme.budget || quizAnswers.budget || "Ainda não sei";
   const refined = aiPersonalization || {};
   const simple = ["Casa", "Condomínio", "Escola"].includes(place);
-  const sections = [
+  const modules = selectedModuleDetails(selectedModules.length ? selectedModules : recommendedModuleIds(confirmedTheme, quizAnswers));
+  const sections = uniqueList([
     "Página inicial com contagem regressiva",
-    "Convite digital com informações da festa",
-    "Confirmação de presença",
-    "Galeria de fotos com aprovação",
-    "Quiz sobre a criança",
-    "Mural de recados",
-    "Cápsula do tempo",
+    ...modules.map(module => module.section),
     "Localização",
     "Agradecimento pós-festa"
-  ];
-  if (!simple) sections.splice(7, 0, "Modo telão para o dia da festa");
-  if (budget !== "Baixo") sections.splice(7, 0, "Missões da festa");
+  ]);
+  const interactions = uniqueList([
+    refined.guestInteraction || "Interação leve para convidados no dia da festa",
+    ...modules.map(module => module.interaction)
+  ]);
+  const evaluationCount = modules.filter(module => module.plan === "evaluation").length;
 
   return {
     experienceName,
@@ -737,27 +885,25 @@ function generateExperiencePreview(confirmedTheme, quizAnswers, aiPersonalizatio
     palette: paletteForTheme(themeName, refined.palette),
     visualStyle: refined.decorIdea || `Visual acolhedor, moderno e fácil de adaptar ao tema ${themeName}.`,
     sections,
-    interactions: [
-      refined.guestInteraction || "Quiz curto para convidados no dia da festa",
-      "Mural de mensagens aprovado pelos pais",
-      "Upload de fotos com moderação",
-      "Cápsula do tempo para a criança ler no futuro"
-    ],
+    interactions,
     activities: [
-      "Perguntas divertidas sobre a criança",
-      "Pedido de fotos afetivas dos convidados",
-      simple ? "Missões simples que não exigem estrutura extra" : "Modo telão com fotos, mensagens e ranking"
+      modules.some(module => module.id === "quiz") ? "Perguntas divertidas sobre a criança" : "Atividade leve alinhada ao tema",
+      modules.some(module => module.id === "gallery") ? "Pedido de fotos afetivas dos convidados" : "Momento de registro para a família",
+      modules.some(module => module.id === "missions") ? "Missões da festa para gerar memórias" : "Interação simples sem depender de estrutura extra"
     ],
     invitationSuggestion: `Convite digital com o nome da experiência, data, horário, local, RSVP e um texto curto no clima de ${themeName}.`,
-    complexity: budget === "Baixo" || simple ? "Baixa a média" : "Média",
+    complexity: evaluationCount ? "Média, com itens para avaliação" : (budget === "Baixo" || simple ? "Baixa a média" : "Média"),
     viabilityNotes: simple
-      ? "Priorizar componentes simples, pouco peso visual e interações que funcionem bem no celular."
-      : "Validar volume de convidados, telão, moderação de fotos e prazo de produção."
+      ? "Priorizar componentes simples, pouco peso visual e interações que funcionem bem no celular. Módulos extras seguem para avaliação."
+      : "Validar volume de convidados, módulos extras, moderação de fotos e prazo de produção."
   };
 }
 
-function generateDevelopmentBriefing(confirmedTheme, quizAnswers, aiPersonalization, experiencePreview) {
-  const preview = experiencePreview || generateExperiencePreview(confirmedTheme, quizAnswers, aiPersonalization);
+function generateDevelopmentBriefing(confirmedTheme, quizAnswers, aiPersonalization, experiencePreview, selectedModules = []) {
+  const modules = selectedModuleDetails(selectedModules.length ? selectedModules : recommendedModuleIds(confirmedTheme, quizAnswers));
+  const includedModules = modules.filter(module => module.plan === "included");
+  const evaluationModules = modules.filter(module => module.plan === "evaluation");
+  const preview = experiencePreview || generateExperiencePreview(confirmedTheme, quizAnswers, aiPersonalization, selectedModules);
   const subject = `Solicitação de avaliação - experiência de festa: ${confirmedTheme.themeName}`;
   const body = [
     `Tema escolhido: ${confirmedTheme.themeName}`,
@@ -771,14 +917,11 @@ function generateDevelopmentBriefing(confirmedTheme, quizAnswers, aiPersonalizat
     "Resumo do conceito:",
     preview.conceptSummary,
     "",
-    "Funcionalidades desejadas:",
-    "- Convite digital",
-    "- RSVP",
-    "- Galeria de fotos com aprovação",
-    "- Quiz sobre a criança",
-    "- Mural de recados",
-    "- Cápsula do tempo",
-    "- Álbum pós-festa",
+    "Módulos incluídos no plano contratado:",
+    ...(includedModules.length ? includedModules.map(module => `- ${module.name}: ${module.description}`) : ["- Nenhum selecionado."]),
+    "",
+    "Módulos para avaliação do time:",
+    ...(evaluationModules.length ? evaluationModules.map(module => `- ${module.name}: ${module.description}`) : ["- Nenhum módulo extra selecionado."]),
     "",
     "Ideias de interação:",
     ...preview.interactions.map(item => `- ${item}`),
@@ -792,11 +935,10 @@ function generateDevelopmentBriefing(confirmedTheme, quizAnswers, aiPersonalizat
     "- Não prometer criação automática",
     "- Fotos e mensagens precisam de aprovação dos pais",
     "",
-    "Pontos opcionais:",
-    "- Modo telão",
-    "- Missões da festa",
-    "- Cardápio",
-    "- História da criança",
+    "Transparência comercial:",
+    "- O responsável selecionou os módulos acima no assistente.",
+    "- Itens incluídos podem seguir como parte do plano contratado.",
+    "- Itens para avaliação precisam de confirmação de viabilidade, prazo e complexidade.",
     "",
     "Pontos de atenção para viabilidade:",
     preview.viabilityNotes,
@@ -811,6 +953,29 @@ function generateDevelopmentBriefing(confirmedTheme, quizAnswers, aiPersonalizat
     "Avaliar viabilidade, prazo e complexidade para criar a prévia ou experiência personalizada."
   ].join("\n");
   return { subject, body };
+}
+
+function selectedModuleDetails(ids = state.selectedModules) {
+  const wanted = new Set(ids);
+  return featureModules.filter(module => wanted.has(module.id));
+}
+
+function recommendedModuleIds(confirmation = currentConfirmation(), answers = state.answers) {
+  const ids = ["invite", "rsvp", "gallery", "messages", "capsule", "album"];
+  const interests = answers.interests || [];
+  const place = confirmation.place || answers.place || "";
+  const budget = confirmation.budget || answers.budget || "";
+
+  if (interests.some(item => ["Música", "Dança", "Games", "Brincadeiras", "Futebol"].includes(item))) ids.push("quiz");
+  if (!["Casa", "Condomínio", "Escola"].includes(place) && budget !== "Baixo") ids.push("screen");
+  if (interests.some(item => ["Brincadeiras", "Games", "Faz de conta"].includes(item)) && budget !== "Baixo") ids.push("missions");
+  if (place === "Buffet") ids.push("menu");
+  if (budget === "Alto") ids.push("story");
+  return uniqueList(ids);
+}
+
+function uniqueList(items) {
+  return [...new Set(items.filter(Boolean))];
 }
 
 function buildConfirmation(theme, personalization) {

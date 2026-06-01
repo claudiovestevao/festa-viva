@@ -9,8 +9,9 @@ Fluxo:
 3. Geracao de 3 a 5 sugestoes de tema com custo e dificuldade estimados.
 4. Refinamento com IA opcional, em conversa livre curta.
 5. Confirmacao editavel do tema final.
-6. Previa conceitual da experiencia: visual, secoes, interacoes, atividades e pontos de atencao.
-7. Briefing para avaliacao com copia, edicao e envio por email.
+6. Escolha transparente de modulos: incluidos no plano contratado vs avaliados pelo time.
+7. Previa conceitual da experiencia: visual, secoes, interacoes, atividades e pontos de atencao.
+8. Briefing para avaliacao com copia, edicao e envio por email.
 
 ## Rotas
 
@@ -28,6 +29,7 @@ Fluxo:
 - `ThemeSuggestionCard`
 - `AIPersonalizationPanel`
 - `ThemeConfirmationStep`
+- `FeatureSelectionStep`
 - `ExperiencePreview`
 - `DevelopmentBriefingPreview`
 - `EmailReviewStep`

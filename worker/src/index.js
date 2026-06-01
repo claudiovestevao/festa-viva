@@ -76,6 +76,7 @@ async function submit(request, env) {
     brief: input.brief || {},
     preview: input.preview || {},
     quizAnswers: input.quizAnswers || {},
+    featureModules: normalizeFeatureModules(input.featureModules),
     developmentBriefing: {
       subject: text(input.developmentBriefing?.subject, "", 220),
       body: longText(input.developmentBriefing?.body, "", 8000)
@@ -338,11 +339,16 @@ function emailHtml(submission) {
   const brief = submission.brief || {};
   const preview = submission.preview || {};
   const developmentBriefing = submission.developmentBriefing || {};
+  const included = (submission.featureModules || []).filter(module => module.plan === "included");
+  const evaluation = (submission.featureModules || []).filter(module => module.plan === "evaluation");
   return `<!doctype html><html><body style="font-family:Arial,sans-serif;color:#24151c">
     <h1>${submission.kind === "production" ? "Enviar para producao" : "Solicitar orcamento"}</h1>
     <p><b>ID:</b> ${submission.id}</p>
     <p><b>Contato:</b> ${escapeHtml(submission.contact.name)} | ${escapeHtml(submission.contact.email)} | ${escapeHtml(submission.contact.phone)}</p>
     <p><b>Buffet/codigo:</b> ${escapeHtml(submission.buffetCode || brief.buffet)}</p>
+    <h2>Modulos selecionados</h2>
+    <p><b>Incluidos:</b> ${escapeHtml(included.map(module => module.name).join(", ") || "Nenhum")}</p>
+    <p><b>Para avaliacao:</b> ${escapeHtml(evaluation.map(module => module.name).join(", ") || "Nenhum")}</p>
     <h2>Briefing para avaliacao</h2><pre style="white-space:pre-wrap;background:#171018;color:#fff;padding:16px;border-radius:8px">${escapeHtml(developmentBriefing.body)}</pre>
     <h2>Resumo</h2><p>${escapeHtml(preview.productionSummary || preview.conceptSummary)}</p>
     <h2>Briefing</h2><pre style="white-space:pre-wrap;background:#fff4f8;padding:16px;border-radius:8px">${escapeHtml(JSON.stringify(brief, null, 2))}</pre>
@@ -356,6 +362,16 @@ function normalizeMessages(messages) {
     role: message.role === "assistant" ? "assistant" : "user",
     content: text(message.content, "", 1600)
   })).filter(message => message.content);
+}
+
+function normalizeFeatureModules(modules) {
+  if (!Array.isArray(modules)) return [];
+  return modules.slice(0, 24).map(module => ({
+    id: text(module.id, "", 40),
+    name: text(module.name, "", 120),
+    plan: module.plan === "evaluation" ? "evaluation" : "included",
+    description: text(module.description, "", 260)
+  })).filter(module => module.name);
 }
 
 function extractOutputText(payload) {
