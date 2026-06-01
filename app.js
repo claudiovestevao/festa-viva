@@ -115,12 +115,26 @@ function MinimalHome() {
     <section class="home screen">
       <div class="home-card">
         <div class="brand"><span class="brand-mark"></span> Agente Festeiro</div>
-        <h1>Vamos descobrir o tema ideal da festa?</h1>
-        <p class="lead">Responda algumas perguntas rápidas e receba uma sugestão de tema, prévia da experiência e briefing para avaliação.</p>
-        <div class="cta-row">
-          <button class="button primary" data-action="start">Começar</button>
-          <span class="micro">Leva menos de 2 minutos.</span>
+        <h1>Escolha como quer conhecer a experiência</h1>
+        <p class="lead">Veja demos reais de festas digitais ou planeje uma experiência personalizada com o assistente.</p>
+        <div class="home-options">
+          <a class="route-card luiza" href="/festa-luiza/">
+            <span class="route-eyebrow">Demo 1</span>
+            <strong>Festa da Luiza</strong>
+            <small>Conheça uma experiência publicada, com convite, segurança e galeria.</small>
+          </a>
+          <a class="route-card luma" href="/festa-luma/">
+            <span class="route-eyebrow">Demo 2</span>
+            <strong>Festa da Luma</strong>
+            <small>Veja uma festa tema Minnie com RSVP, fotos, quiz, mural e cápsula.</small>
+          </a>
+          <button class="route-card planner" data-action="start">
+            <span class="route-eyebrow">Assistente</span>
+            <strong>Planejar minha festa</strong>
+            <small>Descubra o tema, gere uma prévia e envie o briefing para avaliação.</small>
+          </button>
         </div>
+        <p class="micro">O planejamento leva menos de 2 minutos.</p>
       </div>
     </section>
   `;

@@ -62,7 +62,7 @@ button {
 }
 
 .home-card {
-  width: min(100%, 540px);
+  width: min(100%, 680px);
   background: rgba(255, 255, 255, .86);
   border: 1px solid var(--line);
   border-radius: 18px;
@@ -107,6 +107,68 @@ p {
   color: var(--muted);
   font-size: 18px;
   line-height: 1.45;
+}
+
+.home-options {
+  display: grid;
+  gap: 10px;
+  margin: 22px 0 14px;
+}
+
+.route-card {
+  width: 100%;
+  min-height: 118px;
+  display: grid;
+  gap: 7px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 16px;
+  color: var(--ink);
+  background: #fff;
+  text-align: left;
+  text-decoration: none;
+  box-shadow: 0 10px 24px rgba(92, 35, 66, .07);
+  transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+}
+
+.route-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(236, 90, 154, .36);
+  box-shadow: 0 16px 32px rgba(92, 35, 66, .12);
+}
+
+.route-card strong {
+  font-size: 22px;
+  line-height: 1.05;
+}
+
+.route-card small {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.route-eyebrow {
+  width: fit-content;
+  border-radius: 999px;
+  padding: 6px 9px;
+  background: #fff2f8;
+  color: var(--pink-dark);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.route-card.luiza {
+  background: linear-gradient(135deg, #fff, #fff4d8);
+}
+
+.route-card.luma {
+  background: linear-gradient(135deg, #fff, #ffeaf4);
+}
+
+.route-card.planner {
+  background: linear-gradient(135deg, #fff, #eef8f3);
 }
 
 .micro {
@@ -519,6 +581,10 @@ p {
 
   .cards {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .home-options {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .card-actions {
