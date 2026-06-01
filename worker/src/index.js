@@ -346,9 +346,9 @@ function emailHtml(submission) {
     <p><b>ID:</b> ${submission.id}</p>
     <p><b>Contato:</b> ${escapeHtml(submission.contact.name)} | ${escapeHtml(submission.contact.email)} | ${escapeHtml(submission.contact.phone)}</p>
     <p><b>Buffet/codigo:</b> ${escapeHtml(submission.buffetCode || brief.buffet)}</p>
-    <h2>Modulos selecionados</h2>
-    <p><b>Incluidos:</b> ${escapeHtml(included.map(module => module.name).join(", ") || "Nenhum")}</p>
-    <p><b>Para avaliacao:</b> ${escapeHtml(evaluation.map(module => module.name).join(", ") || "Nenhum")}</p>
+    <h2>Features selecionadas</h2>
+    <p><b>Recomendadas:</b> ${escapeHtml(included.map(module => module.name).join(", ") || "Nenhuma")}</p>
+    <p><b>Itens Plus:</b> ${escapeHtml(evaluation.map(module => module.name).join(", ") || "Nenhum")}</p>
     <h2>Briefing para avaliacao</h2><pre style="white-space:pre-wrap;background:#171018;color:#fff;padding:16px;border-radius:8px">${escapeHtml(developmentBriefing.body)}</pre>
     <h2>Resumo</h2><p>${escapeHtml(preview.productionSummary || preview.conceptSummary)}</p>
     <h2>Briefing</h2><pre style="white-space:pre-wrap;background:#fff4f8;padding:16px;border-radius:8px">${escapeHtml(JSON.stringify(brief, null, 2))}</pre>

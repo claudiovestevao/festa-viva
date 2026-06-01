@@ -349,42 +349,44 @@ function FeatureSelectionStep() {
   const selected = selectedModuleDetails();
   return StepShell(`
     <div class="section-title">
-      <h2>Escolha os módulos</h2>
-      <p class="lead">O Agente Festeiro ajuda a entender o que faz sentido contratar agora e o que precisa ser avaliado pelo time.</p>
+      <h2>Escolha as features</h2>
+      <p class="lead">Já deixei marcada uma recomendação inicial, normalmente escolhida por outras famílias. Você pode ajustar e adicionar itens Plus.</p>
     </div>
     <section class="panel">
       <div class="module-note">
-        <strong>Transparência antes do orçamento</strong>
-        <p>Os módulos marcados como incluídos entram no plano contratado. Os módulos em avaliação vão no briefing para o time analisar viabilidade, prazo e complexidade.</p>
+        <strong>Antes da prévia, escolha o que quer contratar</strong>
+        <p>As features recomendadas já entram como ponto de partida. Os itens Plus vão no briefing para o time avaliar viabilidade, prazo e complexidade.</p>
       </div>
       <div class="cta-row compact">
-        <button class="button secondary" data-action="select-recommended-modules">Usar sugestão do agente</button>
-        <span class="micro">${recommended.length} módulos sugeridos para este perfil.</span>
+        <button class="button secondary" data-action="select-recommended-modules">Restaurar recomendação inicial</button>
+        <span class="micro">${recommended.length} features normalmente escolhidas para este perfil.</span>
       </div>
     </section>
     <div class="module-columns">
       <section>
-        <h3>Incluído no plano</h3>
+        <h3>Recomendação inicial</h3>
+        <p class="micro">Normalmente escolhido por outras famílias.</p>
         <div class="module-grid">
           ${included.map(module => FeatureModuleCard(module, recommended)).join("")}
         </div>
       </section>
       <section>
-        <h3>Avaliado pelo time</h3>
+        <h3>Itens Plus</h3>
+        <p class="micro">Selecione extras para o time avaliar.</p>
         <div class="module-grid">
           ${evaluation.map(module => FeatureModuleCard(module, recommended)).join("")}
         </div>
       </section>
     </div>
     <section class="panel">
-      <h2>Resumo dos módulos</h2>
+      <h2>Resumo das features</h2>
       ${ModuleSummary(selected)}
       <div class="cta-row">
-        <button class="button primary" data-action="continue-to-preview" ${state.selectedModules.length ? "" : "disabled"}>Gerar prévia com estes módulos</button>
+        <button class="button primary" data-action="continue-to-preview" ${state.selectedModules.length ? "" : "disabled"}>Gerar prévia com estas features</button>
         <button class="button secondary" data-action="back-to-confirm">Voltar ao tema</button>
       </div>
     </section>
-  `, "Módulos", 100);
+  `, "Features", 100);
 }
 
 function FeatureModuleCard(module, recommended = []) {
@@ -392,28 +394,28 @@ function FeatureModuleCard(module, recommended = []) {
   const suggested = recommended.includes(module.id);
   return `
     <button class="module-card ${active ? "active" : ""}" data-action="toggle-module" data-module="${module.id}">
-      <span class="module-badge ${module.plan}">${module.plan === "included" ? "Incluído" : "Avaliar"}</span>
+      <span class="module-badge ${module.plan}">${module.plan === "included" ? "Recomendado" : "Plus"}</span>
       <strong>${escapeHtml(module.name)}</strong>
       <small>${escapeHtml(module.description)}</small>
-      ${suggested ? `<em>Sugestão do agente</em>` : ""}
+      ${suggested ? `<em>Normalmente escolhido</em>` : ""}
     </button>
   `;
 }
 
 function ModuleSummary(modules) {
   if (!modules.length) {
-    return `<p class="micro">Escolha pelo menos um módulo para a experiência. Você pode começar pelos sugeridos pelo agente.</p>`;
+    return `<p class="micro">Escolha pelo menos uma feature para a experiência. Você pode começar pela recomendação inicial.</p>`;
   }
   const included = modules.filter(module => module.plan === "included");
   const evaluation = modules.filter(module => module.plan === "evaluation");
   return `
     <div class="module-summary">
       <div>
-        <span class="module-badge included">Incluído</span>
+        <span class="module-badge included">Recomendado</span>
         <p>${included.length ? included.map(module => module.name).join(", ") : "Nenhum selecionado."}</p>
       </div>
       <div>
-        <span class="module-badge evaluation">Avaliar</span>
+        <span class="module-badge evaluation">Plus</span>
         <p>${evaluation.length ? evaluation.map(module => module.name).join(", ") : "Nenhum selecionado."}</p>
       </div>
     </div>
@@ -426,7 +428,7 @@ function ExperiencePreview() {
   return StepShell(`
     <div class="section-title">
       <h2>Prévia da experiência</h2>
-      <p class="lead">Uma visão conceitual com tema, módulos incluídos e módulos para avaliação.</p>
+      <p class="lead">Uma visão conceitual com tema, features recomendadas e itens Plus para avaliação.</p>
     </div>
     <section class="preview-hero">
       <h2>${escapeHtml(preview.experienceName)}</h2>
@@ -446,7 +448,7 @@ function ExperiencePreview() {
         <p class="micro">${escapeHtml(preview.viabilityNotes)}</p>
       </section>
       <section class="panel">
-        <h2>Módulos escolhidos</h2>
+        <h2>Features escolhidas</h2>
         ${ModuleSummary(modules)}
       </section>
       <section class="panel">
@@ -468,7 +470,7 @@ function ExperiencePreview() {
     </div>
     <div class="cta-row">
       <button class="button primary" data-action="generate-briefing">Gerar briefing</button>
-      <button class="button secondary" data-action="back-to-features">Voltar aos módulos</button>
+      <button class="button secondary" data-action="back-to-features">Voltar às features</button>
     </div>
   `, "Prévia", 100);
 }
@@ -533,7 +535,7 @@ function FlowRoadmap() {
   const steps = [
     { key: "quiz", label: "Dados" },
     { key: "theme", label: "Tema" },
-    { key: "features", label: "Módulos" },
+    { key: "features", label: "Features" },
     { key: "preview", label: "Prévia" },
     { key: "briefing", label: "Envio" }
   ];
@@ -894,8 +896,8 @@ function generateExperiencePreview(confirmedTheme, quizAnswers, aiPersonalizatio
     invitationSuggestion: `Convite digital com o nome da experiência, data, horário, local, RSVP e um texto curto no clima de ${themeName}.`,
     complexity: evaluationCount ? "Média, com itens para avaliação" : (budget === "Baixo" || simple ? "Baixa a média" : "Média"),
     viabilityNotes: simple
-      ? "Priorizar componentes simples, pouco peso visual e interações que funcionem bem no celular. Módulos extras seguem para avaliação."
-      : "Validar volume de convidados, módulos extras, moderação de fotos e prazo de produção."
+      ? "Priorizar componentes simples, pouco peso visual e interações que funcionem bem no celular. Itens Plus seguem para avaliação."
+      : "Validar volume de convidados, itens Plus, moderação de fotos e prazo de produção."
   };
 }
 
@@ -917,11 +919,11 @@ function generateDevelopmentBriefing(confirmedTheme, quizAnswers, aiPersonalizat
     "Resumo do conceito:",
     preview.conceptSummary,
     "",
-    "Módulos incluídos no plano contratado:",
+    "Features recomendadas no plano contratado:",
     ...(includedModules.length ? includedModules.map(module => `- ${module.name}: ${module.description}`) : ["- Nenhum selecionado."]),
     "",
-    "Módulos para avaliação do time:",
-    ...(evaluationModules.length ? evaluationModules.map(module => `- ${module.name}: ${module.description}`) : ["- Nenhum módulo extra selecionado."]),
+    "Itens Plus para avaliação do time:",
+    ...(evaluationModules.length ? evaluationModules.map(module => `- ${module.name}: ${module.description}`) : ["- Nenhum item Plus selecionado."]),
     "",
     "Ideias de interação:",
     ...preview.interactions.map(item => `- ${item}`),
@@ -936,9 +938,9 @@ function generateDevelopmentBriefing(confirmedTheme, quizAnswers, aiPersonalizat
     "- Fotos e mensagens precisam de aprovação dos pais",
     "",
     "Transparência comercial:",
-    "- O responsável selecionou os módulos acima no assistente.",
-    "- Itens incluídos podem seguir como parte do plano contratado.",
-    "- Itens para avaliação precisam de confirmação de viabilidade, prazo e complexidade.",
+    "- O responsável selecionou as features acima no assistente.",
+    "- Features recomendadas podem seguir como parte do plano contratado.",
+    "- Itens Plus precisam de confirmação de viabilidade, prazo e complexidade.",
     "",
     "Pontos de atenção para viabilidade:",
     preview.viabilityNotes,
