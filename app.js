@@ -234,11 +234,11 @@ function AIPersonalizationPanel() {
         <p class="lead">Como é a personalidade da criança e o que ela mais ama fazer hoje?</p>
         <textarea class="textarea" data-bind="refinementText" placeholder="Ex: é curiosa, ama dançar, brincar de faz de conta e desenhar...">${escapeHtml(state.refinementText)}</textarea>
         <div class="cta-row">
-          <button class="button primary" data-action="generate-refinement" ${state.loading ? "disabled" : ""}>Gerar temas refinados</button>
+          <button class="button primary" data-action="generate-refinement" ${state.loading ? "disabled" : ""}>Pensar em temas</button>
           <button class="button secondary" data-action="choose-selected">Usar tema base</button>
           <button class="button ghost" data-action="back-to-suggestions">Voltar</button>
         </div>
-        ${state.loading === "refine" ? `<p class="loading">Gerando opções práticas...</p>` : ""}
+        ${state.loading === "refine" ? AgentThinkingLoader() : ""}
         ${state.error ? `<p class="micro">${escapeHtml(state.error)}</p>` : ""}
       </section>
     </div>
@@ -252,6 +252,27 @@ function AIPersonalizationPanel() {
       </div>
     ` : ""}
   `, "Refinamento", 100);
+}
+
+function AgentThinkingLoader() {
+  return `
+    <div class="agent-loader" role="status" aria-live="polite">
+      <div class="agent-avatar" aria-hidden="true">
+        <span class="party-hat"></span>
+        <span class="agent-face">
+          <span class="agent-eye left"></span>
+          <span class="agent-eye right"></span>
+          <span class="agent-smile"></span>
+        </span>
+        <span class="agent-baton"></span>
+      </div>
+      <div>
+        <strong>Agente Festeiro em ação</strong>
+        <p>Ele está misturando tema, cores, brincadeiras e lembrancinhas possíveis.</p>
+        <span class="thought-dots"><i></i><i></i><i></i></span>
+      </div>
+    </div>
+  `;
 }
 
 function RefinedThemeCard(theme, index) {
@@ -519,14 +540,14 @@ async function refineWithAI() {
       baseTheme: state.selectedTheme,
       userDescription: state.refinementText,
       quizAnswers: state.answers
-    });
+    }, { timeoutMs: 7000 });
     setState({ loading: "", refinedThemes: response.themes || [] });
   } catch (error) {
     const refinedThemes = generatePersonalizedThemes(state.selectedTheme, state.refinementText, state.answers);
     setState({
       loading: "",
       refinedThemes,
-      error: "Usei uma sugestão local porque a IA demorou a responder. Dá para seguir normalmente."
+      error: "Mostrei uma versão rápida porque a IA demorou. Dá para seguir normalmente."
     });
   }
 }
@@ -578,12 +599,23 @@ async function sendEmail() {
   }
 }
 
-async function api(path, body) {
-  const response = await fetch(API + path, {
+async function api(path, body, options = {}) {
+  const controller = options.timeoutMs ? new AbortController() : null;
+  const timer = controller ? setTimeout(() => controller.abort(), options.timeoutMs) : null;
+  let response;
+  try {
+    response = await fetch(API + path, {
     method: "POST",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify(body)
-  });
+      body: JSON.stringify(body),
+      signal: controller?.signal
+    });
+  } catch (error) {
+    if (error.name === "AbortError") throw new Error("O Agente Festeiro demorou demais para pensar.");
+    throw error;
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
   const payload = await response.json().catch(() => ({ ok: false, error: "Erro inesperado." }));
   if (!response.ok || payload.ok === false) throw new Error(payload.error || "Erro inesperado.");
   return payload;

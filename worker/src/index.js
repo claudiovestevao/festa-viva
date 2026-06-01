@@ -148,10 +148,10 @@ async function callOpenAIThemeRefine(env, input) {
       "content-type": "application/json"
     },
     body: JSON.stringify({
-      model: env.OPENAI_MODEL || "gpt-4.1-mini",
+      model: env.OPENAI_REFINE_MODEL || env.OPENAI_MODEL || "gpt-4.1-nano",
       input: [
         { role: "system", content: [{ type: "input_text", text: themeRefinePrompt() }] },
-        { role: "user", content: [{ type: "input_text", text: JSON.stringify(input, null, 2) }] }
+        { role: "user", content: [{ type: "input_text", text: JSON.stringify(input) }] }
       ],
       text: {
         format: {
@@ -161,7 +161,7 @@ async function callOpenAIThemeRefine(env, input) {
           schema: themeRefineSchema()
         }
       },
-      max_output_tokens: 1600
+      max_output_tokens: 900
     })
   });
 
@@ -205,8 +205,9 @@ function themeRefinePrompt() {
   return `Voce e um consultor de festas infantis no Brasil.
 
 Tarefa:
-- Gerar no maximo 3 temas refinados a partir do tema base, respostas do questionario e uma frase sobre a crianca.
+- Gerar 2 temas refinados a partir do tema base, respostas do questionario e uma frase sobre a crianca.
 - Ser pratico, acolhedor e objetivo.
+- Cada campo deve ser curto. Conceito em ate 160 caracteres; demais campos em ate 110 caracteres.
 - Priorizar ideias possiveis de executar no Brasil.
 - Adaptar a idade e ao local.
 - Se o orcamento for baixo, evitar ideias caras.
@@ -284,7 +285,7 @@ function themeRefineSchema() {
     properties: {
       themes: {
         type: "array",
-        maxItems: 3,
+        maxItems: 2,
         items: {
           type: "object",
           additionalProperties: false,
