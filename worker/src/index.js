@@ -206,7 +206,7 @@ function themeRefinePrompt() {
   return `Voce e um consultor de festas infantis no Brasil.
 
 Tarefa:
-- Gerar 2 temas refinados a partir do tema base, respostas do questionario e uma frase sobre a crianca.
+- Gerar 1 recomendacao final de tema a partir do tema base, respostas do questionario e preferencia da familia.
 - Ser pratico, acolhedor e objetivo.
 - Cada campo deve ser curto. Conceito em ate 160 caracteres; demais campos em ate 110 caracteres.
 - Priorizar ideias possiveis de executar no Brasil.
@@ -286,7 +286,8 @@ function themeRefineSchema() {
     properties: {
       themes: {
         type: "array",
-        maxItems: 2,
+        minItems: 1,
+        maxItems: 1,
         items: {
           type: "object",
           additionalProperties: false,
@@ -339,16 +340,18 @@ function emailHtml(submission) {
   const brief = submission.brief || {};
   const preview = submission.preview || {};
   const developmentBriefing = submission.developmentBriefing || {};
-  const included = (submission.featureModules || []).filter(module => module.plan === "included");
-  const evaluation = (submission.featureModules || []).filter(module => module.plan === "evaluation");
+  const standard = (submission.featureModules || []).filter(module => module.tier === "standard");
+  const recommended = (submission.featureModules || []).filter(module => module.tier === "recommended");
+  const sophisticated = (submission.featureModules || []).filter(module => module.tier === "sophisticated");
   return `<!doctype html><html><body style="font-family:Arial,sans-serif;color:#24151c">
     <h1>${submission.kind === "production" ? "Enviar para producao" : "Solicitar orcamento"}</h1>
     <p><b>ID:</b> ${submission.id}</p>
     <p><b>Contato:</b> ${escapeHtml(submission.contact.name)} | ${escapeHtml(submission.contact.email)} | ${escapeHtml(submission.contact.phone)}</p>
     <p><b>Buffet/codigo:</b> ${escapeHtml(submission.buffetCode || brief.buffet)}</p>
-    <h2>Features selecionadas</h2>
-    <p><b>Recomendadas:</b> ${escapeHtml(included.map(module => module.name).join(", ") || "Nenhuma")}</p>
-    <p><b>Itens Plus:</b> ${escapeHtml(evaluation.map(module => module.name).join(", ") || "Nenhum")}</p>
+    <h2>Itens da experiencia</h2>
+    <p><b>Padrao:</b> ${escapeHtml(standard.map(module => module.name).join(", ") || "Nenhum")}</p>
+    <p><b>Recomendados:</b> ${escapeHtml(recommended.map(module => module.name).join(", ") || "Nenhum")}</p>
+    <p><b>Sofisticados:</b> ${escapeHtml(sophisticated.map(module => module.name).join(", ") || "Nenhum")}</p>
     <h2>Briefing para avaliacao</h2><pre style="white-space:pre-wrap;background:#171018;color:#fff;padding:16px;border-radius:8px">${escapeHtml(developmentBriefing.body)}</pre>
     <h2>Resumo</h2><p>${escapeHtml(preview.productionSummary || preview.conceptSummary)}</p>
     <h2>Briefing</h2><pre style="white-space:pre-wrap;background:#fff4f8;padding:16px;border-radius:8px">${escapeHtml(JSON.stringify(brief, null, 2))}</pre>
@@ -369,7 +372,7 @@ function normalizeFeatureModules(modules) {
   return modules.slice(0, 24).map(module => ({
     id: text(module.id, "", 40),
     name: text(module.name, "", 120),
-    plan: module.plan === "evaluation" ? "evaluation" : "included",
+    tier: ["standard", "recommended", "sophisticated"].includes(module.tier) ? module.tier : "recommended",
     description: text(module.description, "", 260)
   })).filter(module => module.name);
 }

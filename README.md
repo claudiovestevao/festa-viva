@@ -5,12 +5,12 @@ Assistente mobile-first para pais e maes escolherem ou refinarem o tema da festa
 Fluxo:
 
 1. Tela inicial minimalista com CTA para comecar.
-2. Questionario guiado por chips: idade, local, tamanho, estilo, interesses, restricoes e orcamento.
-3. Geracao de 3 a 5 sugestoes de tema com custo e dificuldade estimados.
-4. Refinamento com IA opcional, em conversa livre curta.
+2. Questionario guiado por chips: idade, local, tamanho, data, estilo, interesses, restricoes e orcamento.
+3. Geracao de 3 sugestoes de tema com custo e dificuldade estimados.
+4. Refinamento com IA opcional, com perguntas rapidas e uma recomendacao final.
 5. Confirmacao editavel do tema final.
-6. Escolha transparente de features: recomendacao inicial normalmente escolhida por familias parecidas e itens Plus para avaliacao do time.
-7. Previa conceitual da experiencia: visual, secoes, interacoes, atividades e pontos de atencao.
+6. Escolha transparente dos itens da experiencia: padrao, recomendado e sofisticado.
+7. Previa conceitual editavel: conceito, visual, secoes, interacoes, atividades e pontos de atencao.
 8. Briefing para avaliacao com copia, edicao e envio por email.
 
 ## Rotas

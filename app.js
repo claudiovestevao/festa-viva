@@ -18,7 +18,13 @@ const questions = [
     id: "size",
     prompt: "Qual será o tamanho da festa?",
     type: "single",
-    options: ["Só família", "Pequena", "Média", "Grande", "Ainda não sei"]
+    options: ["Até 30 pessoas", "31 a 50 pessoas", "51 a 80 pessoas", "Mais de 80 pessoas", "Ainda não sei"]
+  },
+  {
+    id: "eventDate",
+    prompt: "Qual é a data da festa?",
+    type: "date",
+    placeholder: "Escolha a data do evento"
   },
   {
     id: "style",
@@ -47,19 +53,19 @@ const questions = [
 ];
 
 const featureModules = [
-  { id: "invite", name: "Convite digital", plan: "included", description: "Página inicial com tema, data, horário, local e contagem regressiva.", section: "Convite digital com contagem regressiva", interaction: "Compartilhamento simples do convite" },
-  { id: "rsvp", name: "RSVP por família", plan: "included", description: "Confirmação de presença com adultos, crianças pagantes e menores de 5.", section: "Confirmação de presença", interaction: "Contagem por família para os pais" },
-  { id: "gallery", name: "Fotos com aprovação", plan: "included", description: "Convidados enviam fotos e os pais aprovam antes de publicar.", section: "Galeria de fotos com aprovação", interaction: "Upload de fotos moderado" },
-  { id: "quiz", name: "Quiz da criança", plan: "included", description: "Perguntas rápidas para brincar com os convidados no dia da festa.", section: "Quiz sobre a criança", interaction: "Ranking leve do quiz" },
-  { id: "messages", name: "Mural de recados", plan: "included", description: "Mensagens dos convidados com aprovação dos pais.", section: "Mural de recados", interaction: "Recados afetivos para a família" },
-  { id: "capsule", name: "Cápsula do tempo", plan: "included", description: "Mensagens para a criança ler no futuro.", section: "Cápsula do tempo", interaction: "Pergunta afetiva para o futuro" },
-  { id: "album", name: "Álbum pós-festa", plan: "included", description: "Página de lembranças depois da festa, com fotos aprovadas.", section: "Álbum pós-festa", interaction: "Agradecimento pós-festa" },
-  { id: "screen", name: "Modo telão", plan: "evaluation", description: "Fotos, recados e ranking em uma tela durante o evento.", section: "Modo telão para o dia da festa", interaction: "Telão com recados, fotos e ranking" },
-  { id: "missions", name: "Missões da festa", plan: "evaluation", description: "Desafios simples para convidados criarem fotos e memórias.", section: "Missões da festa", interaction: "Missões guiadas para convidados" },
-  { id: "menu", name: "Cardápio", plan: "evaluation", description: "Cardápio do buffet ou da festa dentro do site.", section: "Cardápio", interaction: "Consulta rápida do cardápio" },
-  { id: "story", name: "História da criança", plan: "evaluation", description: "Linha do tempo, fotos e pequenos marcos da criança.", section: "História da criança", interaction: "Linha do tempo afetiva" },
-  { id: "customGame", name: "Jogo personalizado", plan: "evaluation", description: "Uma brincadeira digital sob medida para o tema.", section: "Jogo personalizado", interaction: "Mini jogo temático" },
-  { id: "messaging", name: "Disparos por WhatsApp/e-mail", plan: "evaluation", description: "Convites e lembretes enviados por canais oficiais.", section: "Convites e lembretes automatizados", interaction: "Mensagem de convite e lembrete" }
+  { id: "invite", name: "Convite digital", tier: "standard", description: "Convite com tema, data, horário, local e contagem regressiva.", section: "Convite digital com contagem regressiva", interaction: "Compartilhamento simples do convite" },
+  { id: "rsvp", name: "Convidados + RSVP", tier: "standard", description: "Lista de convidados, confirmação por família e contagem de adultos/crianças.", section: "Confirmação de presença", interaction: "Contagem por família para os pais" },
+  { id: "gallery", name: "Fotos com aprovação", tier: "standard", description: "Convidados enviam fotos e os pais aprovam antes de virar retrospectiva.", section: "Galeria de fotos com aprovação", interaction: "Upload de fotos moderado" },
+  { id: "story", name: "História da criança", tier: "standard", description: "Linha do tempo com fotos, marcos e momentos especiais.", section: "História da criança", interaction: "Linha do tempo afetiva" },
+  { id: "quiz", name: "Quiz da criança", tier: "recommended", description: "Perguntas rápidas para brincar com convidados no dia da festa.", section: "Quiz sobre a criança", interaction: "Ranking leve do quiz" },
+  { id: "messages", name: "Mural de recados", tier: "recommended", description: "Mensagens dos convidados com aprovação dos pais.", section: "Mural de recados", interaction: "Recados afetivos para a família" },
+  { id: "capsule", name: "Cápsula do tempo", tier: "recommended", description: "Mensagens para a criança ler no futuro.", section: "Cápsula do tempo", interaction: "Pergunta afetiva para o futuro" },
+  { id: "album", name: "Álbum pós-festa", tier: "recommended", description: "Página de lembranças depois da festa, com fotos aprovadas.", section: "Álbum pós-festa", interaction: "Agradecimento pós-festa" },
+  { id: "missions", name: "Missões da festa", tier: "recommended", description: "Desafios simples para convidados criarem fotos e memórias.", section: "Missões da festa", interaction: "Missões guiadas para convidados" },
+  { id: "menu", name: "Cardápio", tier: "recommended", description: "Cardápio do buffet ou da festa dentro do site.", section: "Cardápio", interaction: "Consulta rápida do cardápio" },
+  { id: "screen", name: "Modo telão", tier: "sophisticated", description: "Fotos, recados e ranking em uma tela durante o evento.", section: "Modo telão para o dia da festa", interaction: "Telão com recados, fotos e ranking" },
+  { id: "customGame", name: "Jogo personalizado", tier: "sophisticated", description: "Uma brincadeira digital sob medida para o tema.", section: "Jogo personalizado", interaction: "Mini jogo temático" },
+  { id: "messaging", name: "Disparos por WhatsApp/e-mail", tier: "sophisticated", description: "Convites e lembretes enviados por canais oficiais.", section: "Convites e lembretes automatizados", interaction: "Mensagem de convite e lembrete" }
 ];
 
 const initialState = {
@@ -68,7 +74,7 @@ const initialState = {
   answers: {},
   suggestions: [],
   selectedTheme: null,
-  refinementText: "",
+  refinementAnswers: {},
   refinedThemes: [],
   aiPersonalization: null,
   confirmation: {},
@@ -139,24 +145,34 @@ function MinimalHome() {
     <section class="home screen">
       <div class="home-card">
         <div class="brand"><span class="brand-mark"></span> Agente Festeiro</div>
-        <h1>Escolha como quer conhecer a experiência</h1>
-        <p class="lead">Veja demos reais de festas digitais ou planeje uma experiência personalizada com o assistente.</p>
+        <h1>Planeje a festa digital sem dor de cabeça</h1>
+        <p class="lead">O assistente ajuda a escolher tema, montar convite, organizar convidados, fotos, recados e memórias para o grande dia.</p>
         <div class="home-options">
-          <a class="route-card luiza" href="/festa-luiza/">
-            <span class="route-eyebrow">Demo 1</span>
-            <strong>Festa da Luiza</strong>
-            <small>Conheça uma experiência publicada, com convite, segurança e galeria.</small>
-          </a>
-          <a class="route-card luma" href="/festa-luma/">
-            <span class="route-eyebrow">Demo 2</span>
-            <strong>Festa da Luma</strong>
-            <small>Veja uma festa tema Minnie com RSVP, fotos, quiz, mural e cápsula.</small>
-          </a>
-          <button class="route-card planner" data-action="start">
+          <button class="route-card planner featured" data-action="start">
             <span class="route-eyebrow">Assistente</span>
             <strong>Planejar minha festa</strong>
-            <small>Descubra o tema, gere uma prévia e envie o briefing para avaliação.</small>
+            <small>Responda perguntas rápidas, receba uma recomendação de tema e gere um briefing para avaliação.</small>
           </button>
+          <div class="demo-area">
+            <p class="micro"><strong>Demos de sites personalizados</strong></p>
+            <div class="demo-grid">
+              <a class="route-card luiza" href="/festa-luiza/">
+                <span class="route-eyebrow">Demo</span>
+                <strong>Festa da Luiza</strong>
+                <small>Convite, segurança, galeria e memórias da festa.</small>
+              </a>
+              <a class="route-card luma" href="/festa-luma/">
+                <span class="route-eyebrow">Demo</span>
+                <strong>Festa da Luma</strong>
+                <small>Tema Minnie com RSVP, quiz, mural e cápsula.</small>
+              </a>
+              <a class="route-card leonidas" href="/festa-leonidas/">
+                <span class="route-eyebrow">Demo nova</span>
+                <strong>Festa do Leonidas</strong>
+                <small>Futebol, 5 anos e uma festa inspirada no tricolor.</small>
+              </a>
+            </div>
+          </div>
         </div>
         <p class="micro">O planejamento leva menos de 2 minutos.</p>
       </div>
@@ -180,6 +196,19 @@ function ChatThemeAssistant() {
 }
 
 function ChatQuestion(question) {
+  if (question.type === "date") {
+    return `
+      <section class="question-card">
+        <h2>${escapeHtml(question.prompt)}</h2>
+        <p class="micro">Se ainda não souber, pode seguir sem preencher e ajustar depois.</p>
+        <input class="input date-input" type="date" data-bind="answers.${question.id}" value="${escapeAttr(getAnswer(question.id))}" aria-label="${escapeAttr(question.placeholder || question.prompt)}">
+        <div class="cta-row">
+          <button class="button primary" data-action="next-question">Continuar</button>
+          <button class="button ghost" data-action="back-question">Voltar</button>
+        </div>
+      </section>
+    `;
+  }
   return `
     <section class="question-card">
       <h2>${escapeHtml(question.prompt)}</h2>
@@ -241,18 +270,28 @@ function ThemeSuggestionCard(theme, index) {
 
 function AIPersonalizationPanel() {
   const theme = state.selectedTheme || {};
+  const refinement = state.refinementAnswers || {};
+  const canAskAi = refinement.energy && refinement.priority;
   return StepShell(`
     <div class="assistant-layout">
       <aside class="assistant-card">
         <p><strong>Base escolhida:</strong> ${escapeHtml(theme.name || "Tema")}</p>
-        <p class="micro">Agora a IA pode deixar a ideia mais pessoal, sem inventar algo caro ou difícil demais.</p>
+        <p class="micro">Responda rapidinho para a IA entender o clima da festa antes de recomendar um caminho final.</p>
       </aside>
       <section class="question-card">
         <h2>Refinar com IA</h2>
-        <p class="lead">Como é a personalidade da criança e o que ela mais ama fazer hoje?</p>
-        <textarea class="textarea" data-bind="refinementText" placeholder="Ex: é curiosa, ama dançar, brincar de faz de conta e desenhar...">${escapeHtml(state.refinementText)}</textarea>
+        <p class="lead">Como você imagina a dinâmica da festa?</p>
+        <div class="chips compact">
+          ${["Mais brincadeiras", "Mais fotos e memórias", "Mais quiz e desafios", "Mais encanto visual"].map(option => RefinementChoice("energy", option, refinement.energy)).join("")}
+        </div>
+        <p class="lead small">O que não pode faltar?</p>
+        <div class="chips compact">
+          ${["Futebol", "Música", "Dança", "Fotos", "Lembrancinha", "Telão", "Comidinhas"].map(option => RefinementChoice("priority", option, refinement.priority)).join("")}
+        </div>
+        <p class="lead small">Algum detalhe importante?</p>
+        <textarea class="textarea compact-area" data-bind="refinementAnswers.detail" placeholder="Ex: ele é tímido, ama jogar bola com os primos e gosta do São Paulo...">${escapeHtml(refinement.detail || "")}</textarea>
         <div class="cta-row">
-          <button class="button primary" data-action="generate-refinement" ${state.loading ? "disabled" : ""}>Pensar em temas</button>
+          <button class="button primary" data-action="generate-refinement" ${state.loading || !canAskAi ? "disabled" : ""}>Ver recomendação da IA</button>
           <button class="button secondary" data-action="choose-selected">Usar tema base</button>
           <button class="button ghost" data-action="back-to-suggestions">Voltar</button>
         </div>
@@ -262,14 +301,18 @@ function AIPersonalizationPanel() {
     </div>
     ${state.refinedThemes.length ? `
       <div class="section-title">
-        <h2>Opções refinadas</h2>
-        <p class="micro">Escolha uma delas para confirmar o tema final.</p>
+        <h2>Recomendação final da IA</h2>
+        <p class="micro">Uma direção única para seguir com clareza.</p>
       </div>
       <div class="cards">
         ${state.refinedThemes.map((theme, index) => RefinedThemeCard(theme, index)).join("")}
       </div>
     ` : ""}
   `, "Refinamento", 100);
+}
+
+function RefinementChoice(field, option, current) {
+  return `<button class="chip ${current === option ? "active" : ""}" data-action="refinement-choice" data-field="${field}" data-value="${escapeAttr(option)}">${escapeHtml(option)}</button>`;
 }
 
 function AgentThinkingLoader() {
@@ -308,7 +351,7 @@ function RefinedThemeCard(theme, index) {
         <span class="tag">Custo: ${escapeHtml(theme.costLevel)}</span>
         <span class="tag">Dificuldade: ${escapeHtml(theme.difficultyLevel)}</span>
       </div>
-      <button class="button primary full" data-action="choose-refined" data-index="${index}">Escolher este tema</button>
+      <button class="button primary full" data-action="choose-refined" data-index="${index}">Usar esta recomendação</button>
     </article>
   `;
 }
@@ -325,6 +368,7 @@ function ThemeConfirmationStep() {
         ${inputField("Tema escolhido", "confirmation.themeName", c.themeName)}
         ${inputField("Nome sugerido da experiência", "confirmation.experienceName", c.experienceName)}
         ${inputField("Idade da criança", "confirmation.age", c.age)}
+        ${inputField("Data da festa", "confirmation.eventDate", c.eventDate)}
         ${inputField("Local da festa", "confirmation.place", c.place)}
         ${inputField("Estilo", "confirmation.style", c.style)}
         ${inputField("Orçamento", "confirmation.budget", c.budget)}
@@ -344,135 +388,146 @@ function ThemeConfirmationStep() {
 
 function FeatureSelectionStep() {
   const recommended = recommendedModuleIds(currentConfirmation(), state.answers);
-  const included = featureModules.filter(module => module.plan === "included");
-  const evaluation = featureModules.filter(module => module.plan === "evaluation");
-  const selected = selectedModuleDetails();
+  const standard = featureModules.filter(module => module.tier === "standard");
+  const recommendedItems = featureModules.filter(module => module.tier === "recommended");
+  const sophisticated = featureModules.filter(module => module.tier === "sophisticated");
   return StepShell(`
     <div class="section-title">
-      <h2>Escolha as features</h2>
-      <p class="lead">Já deixei marcada uma recomendação inicial, normalmente escolhida por outras famílias. Você pode ajustar e adicionar itens Plus.</p>
+      <h2>O que sua festa vai ter?</h2>
+      <p class="lead">Já deixei marcada uma seleção inicial, normalmente escolhida por outras famílias. Você pode ajustar antes da prévia.</p>
     </div>
     <section class="panel">
       <div class="module-note">
-        <strong>Antes da prévia, escolha o que quer contratar</strong>
-        <p>As features recomendadas já entram como ponto de partida. Os itens Plus vão no briefing para o time avaliar viabilidade, prazo e complexidade.</p>
+        <strong>Transparente etapa por etapa</strong>
+        <p>Os itens padrão fazem parte da experiência base. Os recomendados ajudam a encantar os convidados. Os sofisticados entram no briefing para o time avaliar prazo, viabilidade e complexidade.</p>
       </div>
       <div class="cta-row compact">
-        <button class="button secondary" data-action="select-recommended-modules">Restaurar recomendação inicial</button>
-        <span class="micro">${recommended.length} features normalmente escolhidas para este perfil.</span>
+        <button class="button secondary" data-action="select-recommended-modules">Restaurar seleção sugerida</button>
+        <span class="micro">${recommended.length} itens sugeridos para este perfil.</span>
       </div>
     </section>
-    <div class="module-columns">
+    <div class="module-columns three">
       <section>
-        <h3>Recomendação inicial</h3>
-        <p class="micro">Normalmente escolhido por outras famílias.</p>
+        <h3>Padrão</h3>
+        <p class="micro">Já vem na proposta base.</p>
         <div class="module-grid">
-          ${included.map(module => FeatureModuleCard(module, recommended)).join("")}
+          ${standard.map(module => FeatureModuleCard(module, recommended)).join("")}
         </div>
       </section>
       <section>
-        <h3>Itens Plus</h3>
-        <p class="micro">Selecione extras para o time avaliar.</p>
+        <h3>Recomendado</h3>
+        <p class="micro">Normalmente escolhido por outras famílias.</p>
         <div class="module-grid">
-          ${evaluation.map(module => FeatureModuleCard(module, recommended)).join("")}
+          ${recommendedItems.map(module => FeatureModuleCard(module, recommended)).join("")}
+        </div>
+      </section>
+      <section>
+        <h3>Sofisticado</h3>
+        <p class="micro">Pode exigir avaliação do time.</p>
+        <div class="module-grid">
+          ${sophisticated.map(module => FeatureModuleCard(module, recommended)).join("")}
         </div>
       </section>
     </div>
-    <section class="panel">
-      <h2>Resumo das features</h2>
-      ${ModuleSummary(selected)}
-      <div class="cta-row">
-        <button class="button primary" data-action="continue-to-preview" ${state.selectedModules.length ? "" : "disabled"}>Gerar prévia com estas features</button>
-        <button class="button secondary" data-action="back-to-confirm">Voltar ao tema</button>
-      </div>
-    </section>
-  `, "Features", 100);
+    <div class="cta-row">
+      <button class="button primary" data-action="continue-to-preview" ${state.selectedModules.length ? "" : "disabled"}>Gerar prévia</button>
+      <button class="button secondary" data-action="back-to-confirm">Voltar ao tema</button>
+    </div>
+  `, "Itens da festa", 100);
 }
 
 function FeatureModuleCard(module, recommended = []) {
   const active = state.selectedModules.includes(module.id);
   const suggested = recommended.includes(module.id);
+  const locked = module.tier === "standard";
+  const label = module.tier === "standard" ? "Padrão" : module.tier === "recommended" ? "Recomendado" : "Sofisticado";
   return `
-    <button class="module-card ${active ? "active" : ""}" data-action="toggle-module" data-module="${module.id}">
-      <span class="module-badge ${module.plan}">${module.plan === "included" ? "Recomendado" : "Plus"}</span>
+    <button class="module-card ${active ? "active" : ""} ${locked ? "locked" : ""}" data-action="toggle-module" data-module="${module.id}">
+      <span class="module-badge ${module.tier}">${label}</span>
       <strong>${escapeHtml(module.name)}</strong>
       <small>${escapeHtml(module.description)}</small>
-      ${suggested ? `<em>Normalmente escolhido</em>` : ""}
+      ${locked ? `<em>Já incluído</em>` : suggested ? `<em>Normalmente escolhido</em>` : ""}
     </button>
   `;
 }
 
 function ModuleSummary(modules) {
   if (!modules.length) {
-    return `<p class="micro">Escolha pelo menos uma feature para a experiência. Você pode começar pela recomendação inicial.</p>`;
+    return `<p class="micro">Escolha pelo menos um item para a experiência. Você pode começar pela seleção sugerida.</p>`;
   }
-  const included = modules.filter(module => module.plan === "included");
-  const evaluation = modules.filter(module => module.plan === "evaluation");
+  const standard = modules.filter(module => module.tier === "standard");
+  const recommended = modules.filter(module => module.tier === "recommended");
+  const sophisticated = modules.filter(module => module.tier === "sophisticated");
   return `
     <div class="module-summary">
       <div>
-        <span class="module-badge included">Recomendado</span>
-        <p>${included.length ? included.map(module => module.name).join(", ") : "Nenhum selecionado."}</p>
+        <span class="module-badge standard">Padrão</span>
+        <p>${standard.length ? standard.map(module => module.name).join(", ") : "Nenhum selecionado."}</p>
       </div>
       <div>
-        <span class="module-badge evaluation">Plus</span>
-        <p>${evaluation.length ? evaluation.map(module => module.name).join(", ") : "Nenhum selecionado."}</p>
+        <span class="module-badge recommended">Recomendado</span>
+        <p>${recommended.length ? recommended.map(module => module.name).join(", ") : "Nenhum selecionado."}</p>
+      </div>
+      <div>
+        <span class="module-badge sophisticated">Sofisticado</span>
+        <p>${sophisticated.length ? sophisticated.map(module => module.name).join(", ") : "Nenhum selecionado."}</p>
       </div>
     </div>
   `;
 }
 
 function ExperiencePreview() {
-  const preview = state.preview || generateExperiencePreview(currentConfirmation(), state.answers, state.aiPersonalization, state.selectedModules);
-  const modules = selectedModuleDetails();
+  const preview = normalizePreview(state.preview || generateExperiencePreview(currentConfirmation(), state.answers, state.aiPersonalization, state.selectedModules));
   return StepShell(`
     <div class="section-title">
       <h2>Prévia da experiência</h2>
-      <p class="lead">Uma visão conceitual com tema, features recomendadas e itens Plus para avaliação.</p>
+      <p class="lead">Uma visão simples do que será avaliado. Você pode ajustar qualquer item antes do briefing.</p>
     </div>
-    <section class="preview-hero">
-      <h2>${escapeHtml(preview.experienceName)}</h2>
-      <p>${escapeHtml(preview.conceptSummary)}</p>
+    <section class="preview-editor">
+      <div class="preview-hero compact">
+        <label class="edit-field hero-field">
+          <span><b>Nome da experiência</b><i aria-hidden="true">✎</i></span>
+          <input class="ghost-input" data-bind="preview.experienceName" value="${escapeAttr(preview.experienceName)}">
+        </label>
+        <label class="edit-field hero-field">
+          <span><b>Resumo do conceito</b><i aria-hidden="true">✎</i></span>
+          <textarea class="ghost-area" data-bind="preview.conceptSummary">${escapeHtml(preview.conceptSummary)}</textarea>
+        </label>
+      </div>
+      <div class="preview-edit-grid">
+        ${PreviewEditField("Paleta de cores", "preview.paletteText", preview.paletteText)}
+        ${PreviewEditArea("Estilo visual", "preview.visualStyle", preview.visualStyle)}
+        ${PreviewEditArea("Seções do site", "preview.sectionsText", preview.sectionsText)}
+        ${PreviewEditArea("Interações para convidados", "preview.interactionsText", preview.interactionsText)}
+        ${PreviewEditArea("Convite digital", "preview.invitationSuggestion", preview.invitationSuggestion)}
+        ${PreviewEditArea("Atividades no dia", "preview.activitiesText", preview.activitiesText)}
+        ${PreviewEditField("Grau de complexidade", "preview.complexity", preview.complexity)}
+        ${PreviewEditArea("Pontos de atenção", "preview.viabilityNotes", preview.viabilityNotes)}
+      </div>
     </section>
-    <div class="preview-grid" style="margin-top:12px">
-      <section class="panel">
-        <h2>Visual</h2>
-        <p class="micro">${escapeHtml(preview.visualStyle)}</p>
-        <div class="palette">
-          ${preview.palette.map(color => `<span class="swatch" style="--swatch:${escapeAttr(color.hex)}">${escapeHtml(color.name)}</span>`).join("")}
-        </div>
-      </section>
-      <section class="panel">
-        <h2>Complexidade</h2>
-        <p class="lead">${escapeHtml(preview.complexity)}</p>
-        <p class="micro">${escapeHtml(preview.viabilityNotes)}</p>
-      </section>
-      <section class="panel">
-        <h2>Features escolhidas</h2>
-        ${ModuleSummary(modules)}
-      </section>
-      <section class="panel">
-        <h2>Seções do site</h2>
-        <ul class="mini-list">${preview.sections.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
-      </section>
-      <section class="panel">
-        <h2>Interações</h2>
-        <ul class="mini-list">${preview.interactions.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
-      </section>
-      <section class="panel">
-        <h2>Convite digital</h2>
-        <p class="micro">${escapeHtml(preview.invitationSuggestion)}</p>
-      </section>
-      <section class="panel">
-        <h2>Atividades</h2>
-        <ul class="mini-list">${preview.activities.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
-      </section>
-    </div>
     <div class="cta-row">
       <button class="button primary" data-action="generate-briefing">Gerar briefing</button>
-      <button class="button secondary" data-action="back-to-features">Voltar às features</button>
+      <button class="button secondary" data-action="back-to-features">Voltar aos itens da festa</button>
     </div>
   `, "Prévia", 100);
+}
+
+function PreviewEditField(label, bind, value) {
+  return `
+    <label class="edit-field">
+      <span><b>${escapeHtml(label)}</b><i aria-hidden="true">✎</i></span>
+      <input class="input" data-bind="${escapeAttr(bind)}" value="${escapeAttr(value || "")}">
+    </label>
+  `;
+}
+
+function PreviewEditArea(label, bind, value) {
+  return `
+    <label class="edit-field">
+      <span><b>${escapeHtml(label)}</b><i aria-hidden="true">✎</i></span>
+      <textarea class="textarea short" data-bind="${escapeAttr(bind)}">${escapeHtml(value || "")}</textarea>
+    </label>
+  `;
 }
 
 function DevelopmentBriefingPreview() {
@@ -535,7 +590,7 @@ function FlowRoadmap() {
   const steps = [
     { key: "quiz", label: "Dados" },
     { key: "theme", label: "Tema" },
-    { key: "features", label: "Features" },
+    { key: "features", label: "Itens" },
     { key: "preview", label: "Prévia" },
     { key: "briefing", label: "Envio" }
   ];
@@ -587,11 +642,16 @@ function handleClick(event) {
   if (action === "back-to-quiz") return setState({ screen: "quiz", questionIndex: Math.max(0, questions.length - 1) });
   if (action === "back-to-suggestions") return setState({ screen: "suggestions", loading: "", error: "" });
   if (action === "choose-theme") return chooseTheme(state.suggestions[index]);
-  if (action === "refine-theme") return setState({ screen: "refine", selectedTheme: state.suggestions[index], refinedThemes: [], error: "" });
+  if (action === "refine-theme") return setState({ screen: "refine", selectedTheme: state.suggestions[index], refinedThemes: [], refinementAnswers: {}, error: "" });
+  if (action === "refinement-choice") return setState({
+    refinementAnswers: { ...(state.refinementAnswers || {}), [target.dataset.field]: value },
+    refinedThemes: [],
+    error: ""
+  });
   if (action === "generate-refinement") return refineWithAI();
   if (action === "choose-selected") return chooseTheme(state.selectedTheme);
   if (action === "choose-refined") return chooseTheme(state.refinedThemes[index], state.refinedThemes[index]);
-  if (action === "refine-current") return setState({ screen: "refine", selectedTheme: state.selectedTheme || currentConfirmation(), refinedThemes: [], error: "" });
+  if (action === "refine-current") return setState({ screen: "refine", selectedTheme: state.selectedTheme || currentConfirmation(), refinedThemes: [], refinementAnswers: {}, error: "" });
   if (action === "confirm-theme") return confirmTheme();
   if (action === "back-to-confirm") return setState({ screen: "confirm" });
   if (action === "toggle-module") return toggleModule(target.dataset.module);
@@ -612,6 +672,9 @@ function handleInput(event) {
   saveState();
   if (bind.startsWith("confirmation.")) {
     state.preview = null;
+    state.briefing = null;
+  }
+  if (bind.startsWith("preview.")) {
     state.briefing = null;
   }
 }
@@ -659,20 +722,26 @@ function chooseTheme(theme, personalization = null) {
 }
 
 async function refineWithAI() {
-  if (!state.refinementText.trim()) {
-    showToast("Conte uma frase sobre a criança para a IA refinar.");
+  const refinement = state.refinementAnswers || {};
+  if (!refinement.energy || !refinement.priority) {
+    showToast("Responda as duas perguntas rápidas para a IA recomendar melhor.");
     return;
   }
   setState({ loading: "refine", error: "" });
+  const userDescription = [
+    `Dinâmica esperada: ${refinement.energy}.`,
+    `Não pode faltar: ${refinement.priority}.`,
+    refinement.detail ? `Detalhe da família: ${refinement.detail}.` : ""
+  ].filter(Boolean).join(" ");
   try {
     const response = await api("/refine", {
       baseTheme: state.selectedTheme,
-      userDescription: state.refinementText,
+      userDescription,
       quizAnswers: state.answers
     }, { timeoutMs: 7000 });
-    setState({ loading: "", refinedThemes: response.themes || [] });
+    setState({ loading: "", refinedThemes: (response.themes || []).slice(0, 1) });
   } catch (error) {
-    const refinedThemes = generatePersonalizedThemes(state.selectedTheme, state.refinementText, state.answers);
+    const refinedThemes = generatePersonalizedThemes(state.selectedTheme, userDescription, state.answers);
     setState({
       loading: "",
       refinedThemes,
@@ -688,7 +757,12 @@ function confirmTheme() {
 }
 
 function toggleModule(moduleId) {
-  if (!featureModules.some(module => module.id === moduleId)) return;
+  const module = featureModules.find(item => item.id === moduleId);
+  if (!module) return;
+  if (module.tier === "standard") {
+    showToast("Esse item já faz parte do padrão da experiência.");
+    return;
+  }
   const selectedModules = state.selectedModules.includes(moduleId)
     ? state.selectedModules.filter(id => id !== moduleId)
     : [...state.selectedModules, moduleId];
@@ -810,7 +884,7 @@ function generateThemeRecommendations(answers) {
     { name: "Mini Festival", whyFits: "Boa escolha para festa média ou grande, com música, fotos e interação.", cost: "Médio", difficulty: "Média" }
   ];
 
-  const themes = uniqueByName([...selected, ...defaults]).slice(0, 5);
+  const themes = uniqueByName([...selected, ...defaults]).slice(0, 3);
   return themes.map(theme => ({
     ...theme,
     whyFits: adaptReason(theme.whyFits, answers, style),
@@ -835,28 +909,6 @@ function generatePersonalizedThemes(baseTheme, userDescription, quizAnswers) {
       costLevel: quizAnswers.budget || "Médio",
       difficultyLevel: easy ? "Baixa" : "Média",
       viabilityNote: `Adequado para ${age} e ${place}.`
-    },
-    {
-      name: `${base.name} Brincante`,
-      concept: "A decoração vira uma brincadeira guiada, com pequenos desafios para crianças e adultos.",
-      palette: ["pink suave", "amarelo manteiga", "azul claro"],
-      decorIdea: "Estações simples: fotos, recados, desafios e mesa do bolo.",
-      guestInteraction: "Missões da festa e ranking leve no site.",
-      partyFavor: "Cartão de missão com adesivos.",
-      costLevel: quizAnswers.budget === "Baixo" ? "Baixo" : "Médio",
-      difficultyLevel: "Média",
-      viabilityNote: "Boa para gerar conteúdo no dia da festa."
-    },
-    {
-      name: `${base.name} Doce e Clean`,
-      concept: "Uma versão mais limpa, delicada e fácil de executar, priorizando fotos bonitas e conforto dos pais.",
-      palette: ["branco", "rosa chá", "dourado suave"],
-      decorIdea: "Poucos elementos bem escolhidos, flores, balões pontuais e identidade visual forte.",
-      guestInteraction: "Cápsula do tempo e álbum pós-festa.",
-      partyFavor: "Mini envelope com mensagem da família.",
-      costLevel: quizAnswers.budget || "Médio",
-      difficultyLevel: "Baixa",
-      viabilityNote: "Boa para famílias que querem beleza sem excesso."
     }
   ];
 }
@@ -879,38 +931,71 @@ function generateExperiencePreview(confirmedTheme, quizAnswers, aiPersonalizatio
     refined.guestInteraction || "Interação leve para convidados no dia da festa",
     ...modules.map(module => module.interaction)
   ]);
-  const evaluationCount = modules.filter(module => module.plan === "evaluation").length;
+  const sophisticatedCount = modules.filter(module => module.tier === "sophisticated").length;
+  const activities = [
+    modules.some(module => module.id === "quiz") ? "Perguntas divertidas sobre a criança" : "Atividade leve alinhada ao tema",
+    modules.some(module => module.id === "gallery") ? "Pedido de fotos afetivas dos convidados" : "Momento de registro para a família",
+    modules.some(module => module.id === "missions") ? "Missões da festa para gerar memórias" : "Interação simples sem depender de estrutura extra"
+  ];
+  const palette = paletteForTheme(themeName, refined.palette);
 
   return {
     experienceName,
     conceptSummary: refined.concept || `Uma experiência digital clean para transformar o tema ${themeName} em convite, interação no dia e memória pós-festa.`,
-    palette: paletteForTheme(themeName, refined.palette),
+    palette,
+    paletteText: palette.map(color => color.name).join(", "),
     visualStyle: refined.decorIdea || `Visual acolhedor, moderno e fácil de adaptar ao tema ${themeName}.`,
     sections,
+    sectionsText: sections.join("\n"),
     interactions,
-    activities: [
-      modules.some(module => module.id === "quiz") ? "Perguntas divertidas sobre a criança" : "Atividade leve alinhada ao tema",
-      modules.some(module => module.id === "gallery") ? "Pedido de fotos afetivas dos convidados" : "Momento de registro para a família",
-      modules.some(module => module.id === "missions") ? "Missões da festa para gerar memórias" : "Interação simples sem depender de estrutura extra"
-    ],
+    interactionsText: interactions.join("\n"),
+    activities,
+    activitiesText: activities.join("\n"),
     invitationSuggestion: `Convite digital com o nome da experiência, data, horário, local, RSVP e um texto curto no clima de ${themeName}.`,
-    complexity: evaluationCount ? "Média, com itens para avaliação" : (budget === "Baixo" || simple ? "Baixa a média" : "Média"),
+    modulesText: modules.map(module => module.name).join("\n"),
+    complexity: sophisticatedCount ? "Média, com itens sofisticados para avaliação" : (budget === "Baixo" || simple ? "Baixa a média" : "Média"),
     viabilityNotes: simple
-      ? "Priorizar componentes simples, pouco peso visual e interações que funcionem bem no celular. Itens Plus seguem para avaliação."
-      : "Validar volume de convidados, itens Plus, moderação de fotos e prazo de produção."
+      ? "Priorizar componentes simples, pouco peso visual e interações que funcionem bem no celular. Itens sofisticados seguem para avaliação."
+      : "Validar volume de convidados, itens sofisticados, moderação de fotos e prazo de produção."
   };
+}
+
+function normalizePreview(preview) {
+  const paletteText = preview.paletteText || (preview.palette || []).map(color => color.name).join(", ");
+  const sectionsText = preview.sectionsText || (preview.sections || []).join("\n");
+  const interactionsText = preview.interactionsText || (preview.interactions || []).join("\n");
+  const activitiesText = preview.activitiesText || (preview.activities || []).join("\n");
+  return {
+    ...preview,
+    paletteText,
+    sectionsText,
+    interactionsText,
+    activitiesText
+  };
+}
+
+function previewList(preview, key) {
+  const text = preview[`${key}Text`];
+  if (typeof text === "string" && text.trim()) {
+    return text.split(/\n|;/).map(item => item.trim()).filter(Boolean);
+  }
+  return Array.isArray(preview[key]) ? preview[key] : [];
 }
 
 function generateDevelopmentBriefing(confirmedTheme, quizAnswers, aiPersonalization, experiencePreview, selectedModules = []) {
   const modules = selectedModuleDetails(selectedModules.length ? selectedModules : recommendedModuleIds(confirmedTheme, quizAnswers));
-  const includedModules = modules.filter(module => module.plan === "included");
-  const evaluationModules = modules.filter(module => module.plan === "evaluation");
-  const preview = experiencePreview || generateExperiencePreview(confirmedTheme, quizAnswers, aiPersonalization, selectedModules);
+  const standardModules = modules.filter(module => module.tier === "standard");
+  const recommendedModules = modules.filter(module => module.tier === "recommended");
+  const sophisticatedModules = modules.filter(module => module.tier === "sophisticated");
+  const preview = normalizePreview(experiencePreview || generateExperiencePreview(confirmedTheme, quizAnswers, aiPersonalization, selectedModules));
+  const interactions = previewList(preview, "interactions");
+  const sections = previewList(preview, "sections");
   const subject = `Solicitação de avaliação - experiência de festa: ${confirmedTheme.themeName}`;
   const body = [
     `Tema escolhido: ${confirmedTheme.themeName}`,
     `Nome da experiência: ${confirmedTheme.experienceName}`,
     `Idade da criança: ${confirmedTheme.age}`,
+    `Data da festa: ${confirmedTheme.eventDate || quizAnswers.eventDate || "Ainda não sei"}`,
     `Local da festa: ${confirmedTheme.place}`,
     `Tamanho estimado: ${quizAnswers.size || "Ainda não sei"}`,
     `Estilo desejado: ${confirmedTheme.style}`,
@@ -919,17 +1004,20 @@ function generateDevelopmentBriefing(confirmedTheme, quizAnswers, aiPersonalizat
     "Resumo do conceito:",
     preview.conceptSummary,
     "",
-    "Features recomendadas no plano contratado:",
-    ...(includedModules.length ? includedModules.map(module => `- ${module.name}: ${module.description}`) : ["- Nenhum selecionado."]),
+    "Itens padrão da experiência:",
+    ...(standardModules.length ? standardModules.map(module => `- ${module.name}: ${module.description}`) : ["- Nenhum item padrão selecionado."]),
     "",
-    "Itens Plus para avaliação do time:",
-    ...(evaluationModules.length ? evaluationModules.map(module => `- ${module.name}: ${module.description}`) : ["- Nenhum item Plus selecionado."]),
+    "Itens recomendados selecionados:",
+    ...(recommendedModules.length ? recommendedModules.map(module => `- ${module.name}: ${module.description}`) : ["- Nenhum item recomendado selecionado."]),
+    "",
+    "Itens sofisticados para avaliação do time:",
+    ...(sophisticatedModules.length ? sophisticatedModules.map(module => `- ${module.name}: ${module.description}`) : ["- Nenhum item sofisticado selecionado."]),
     "",
     "Ideias de interação:",
-    ...preview.interactions.map(item => `- ${item}`),
+    ...interactions.map(item => `- ${item}`),
     "",
     "Seções sugeridas do site:",
-    ...preview.sections.map(item => `- ${item}`),
+    ...sections.map(item => `- ${item}`),
     "",
     "Pontos obrigatórios:",
     "- Experiência mobile-first",
@@ -938,9 +1026,9 @@ function generateDevelopmentBriefing(confirmedTheme, quizAnswers, aiPersonalizat
     "- Fotos e mensagens precisam de aprovação dos pais",
     "",
     "Transparência comercial:",
-    "- O responsável selecionou as features acima no assistente.",
-    "- Features recomendadas podem seguir como parte do plano contratado.",
-    "- Itens Plus precisam de confirmação de viabilidade, prazo e complexidade.",
+    "- O responsável selecionou os itens acima no assistente.",
+    "- Itens padrão e recomendados podem seguir conforme o plano contratado.",
+    "- Itens sofisticados precisam de confirmação de viabilidade, prazo e complexidade.",
     "",
     "Pontos de atenção para viabilidade:",
     preview.viabilityNotes,
@@ -963,16 +1051,13 @@ function selectedModuleDetails(ids = state.selectedModules) {
 }
 
 function recommendedModuleIds(confirmation = currentConfirmation(), answers = state.answers) {
-  const ids = ["invite", "rsvp", "gallery", "messages", "capsule", "album"];
+  const ids = ["invite", "rsvp", "gallery", "story", "messages", "capsule", "album"];
   const interests = answers.interests || [];
-  const place = confirmation.place || answers.place || "";
   const budget = confirmation.budget || answers.budget || "";
 
   if (interests.some(item => ["Música", "Dança", "Games", "Brincadeiras", "Futebol"].includes(item))) ids.push("quiz");
-  if (!["Casa", "Condomínio", "Escola"].includes(place) && budget !== "Baixo") ids.push("screen");
-  if (interests.some(item => ["Brincadeiras", "Games", "Faz de conta"].includes(item)) && budget !== "Baixo") ids.push("missions");
-  if (place === "Buffet") ids.push("menu");
-  if (budget === "Alto") ids.push("story");
+  if (interests.some(item => ["Brincadeiras", "Games", "Faz de conta"].includes(item)) && budget === "Alto") ids.push("missions");
+  if (budget === "Alto") ids.push("screen");
   return uniqueList(ids);
 }
 
@@ -987,6 +1072,7 @@ function buildConfirmation(theme, personalization) {
     themeName,
     experienceName: refined.name ? `Experiência ${refined.name}` : `Experiência ${themeName}`,
     age: state.answers.age || "",
+    eventDate: state.answers.eventDate || "",
     place: state.answers.place || "",
     style: state.answers.style || "",
     budget: state.answers.budget || "",
