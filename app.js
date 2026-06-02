@@ -72,24 +72,20 @@ const questions = [
 const investmentOptions = ["Quero algo econômico", "Quero algo equilibrado", "Quero algo completo", "Quero algo mais sofisticado", "Prefiro não informar agora"];
 
 const featureModules = [
-  { id: "invite", name: "Convite digital", tier: "standard", description: "Convite com tema da festa, data, horário, local e botão de confirmação.", section: "Convite digital", interaction: "Confirmação de presença direto pelo convite" },
+  { id: "invite", name: "Convite da festa", tier: "standard", description: "Convite com tema da festa, data, horário, local e botão de confirmação.", section: "Convite da festa", interaction: "Confirmação de presença direto pelo convite" },
   { id: "rsvp", name: "Convidados + RSVP", tier: "standard", description: "Organize adultos e crianças, acompanhe confirmações e evite surpresas no dia.", section: "Convidados e confirmação de presença", interaction: "Contagem por família para os pais" },
-  { id: "story", name: "História da criança", tier: "standard", description: "Uma página especial contando a personalidade, os gostos e os momentos marcantes da criança.", section: "História da criança", interaction: "Conteúdo afetivo para família e convidados" },
-  { id: "gallery", name: "Fotos com aprovação", tier: "standard", description: "Os pais escolhem quais fotos entram na retrospectiva ou página da festa.", section: "Fotos com aprovação", interaction: "Envio de fotos com aprovação dos pais" },
+  { id: "story", name: "História da criança", tier: "recommended", description: "Uma página especial contando a personalidade, os gostos e os momentos marcantes da criança.", section: "História da criança", interaction: "Conteúdo afetivo para família e convidados" },
+  { id: "gallery", name: "Fotos com aprovação", tier: "recommended", description: "Os pais escolhem quais fotos entram na retrospectiva ou página da festa.", section: "Fotos com aprovação", interaction: "Envio de fotos com aprovação dos pais" },
   { id: "messages", name: "Mural de recados", tier: "recommended", description: "Mensagens carinhosas dos convidados para guardar como lembrança.", section: "Mural de recados", interaction: "Recados afetivos para a família" },
-  { id: "quiz", name: "Quiz da criança", tier: "recommended", description: "Perguntas rápidas e divertidas para os convidados brincarem durante a festa.", section: "Quiz da criança", interaction: "Brincadeira rápida para convidados" },
-  { id: "missions", name: "Missões da festa", tier: "recommended", description: "Desafios simples para aproximar convidados e criar fotos e memórias.", section: "Missões da festa", interaction: "Missões leves para criar memórias" },
   { id: "menu", name: "Cardápio", tier: "recommended", description: "Cardápio infantil, buffet ou opções da festa em uma página fácil de consultar.", section: "Cardápio", interaction: "Consulta rápida do cardápio" },
   { id: "album", name: "Álbum de memórias", tier: "recommended", description: "Uma página para reunir os melhores registros depois da comemoração.", section: "Álbum de memórias", interaction: "Agradecimento e melhores registros pós-festa" },
   { id: "giftGuide", name: "Ideias de presentes", tier: "recommended", description: "Sugestões por idade, tamanho, preferências e fase da criança.", section: "Ideias de presentes", interaction: "Convidados consultam sugestões antes de comprar presente" },
-  { id: "capsule", name: "Cápsula do tempo", tier: "recommended", description: "Mensagens para a criança ler no futuro.", section: "Cápsula do tempo", interaction: "Mensagem afetiva para o futuro" },
-  { id: "screen", name: "Modo telão", tier: "sophisticated", description: "Fotos, mensagens, quiz e ranking para exibir durante a festa.", section: "Modo telão", interaction: "Telão com fotos, mensagens e quiz" },
+  { id: "quiz", name: "Quiz da criança", tier: "sophisticated", description: "Perguntas rápidas e divertidas para os convidados brincarem durante a festa.", section: "Quiz da criança", interaction: "Brincadeira rápida para convidados" },
+  { id: "missions", name: "Missões da festa", tier: "sophisticated", description: "Desafios simples para aproximar convidados e criar fotos e memórias.", section: "Missões da festa", interaction: "Missões leves para criar memórias" },
   { id: "retrospective", name: "Retrospectiva personalizada", tier: "sophisticated", description: "Uma retrospectiva afetiva com fotos, frases e momentos importantes da criança.", section: "Retrospectiva personalizada", interaction: "Retrospectiva afetiva para a família" },
   { id: "partyFlow", name: "Roteiro da festa", tier: "sophisticated", description: "Sugestão de ordem dos momentos: chegada, parabéns, brincadeiras, fotos e encerramento.", section: "Roteiro da festa", interaction: "Roteiro simples para orientar a comemoração" },
-  { id: "decorAI", name: "Sugestão de decoração por IA", tier: "sophisticated", description: "Ideias de cores, mesa, lembrancinhas e detalhes alinhados ao tema escolhido.", section: "Sugestão de decoração por IA", interaction: "Inspirações práticas para decoração" },
   { id: "partyFavors", name: "Lembrancinhas personalizadas", tier: "sophisticated", description: "Ideias de lembrancinhas criativas, úteis e alinhadas ao tema da festa.", section: "Lembrancinhas personalizadas", interaction: "Sugestões de lembrancinhas para convidados" },
   { id: "messaging", name: "Lembretes para convidados", tier: "sophisticated", description: "Envio de lembretes e informações importantes por canais oficiais.", section: "Lembretes para convidados", interaction: "Lembretes por canais oficiais" },
-  { id: "customGame", name: "Jogo personalizado", tier: "sophisticated", description: "Uma brincadeira digital simples criada com base no tema da festa.", section: "Jogo personalizado", interaction: "Mini jogo temático" },
   { id: "timeline", name: "Linha do tempo da criança", tier: "sophisticated", description: "Momentos marcantes da criança organizados de forma visual e afetiva.", section: "Linha do tempo da criança", interaction: "Linha do tempo afetiva" }
 ];
 
@@ -162,6 +158,7 @@ function render() {
     quiz: ChatThemeAssistant,
     budget: InvestmentQuestionStep,
     suggestions: ThemeSuggestionsStep,
+    path: PathRefinementChoiceStep,
     refine: AIPersonalizationPanel,
     confirm: FinalRecommendationStep,
     features: FeatureSelectionStep,
@@ -176,36 +173,31 @@ function MinimalHome() {
     <section class="home screen">
       <div class="home-card">
         <div class="brand"><span class="brand-mark"></span> Agente Festeiro</div>
-        <h1>Vamos planejar sua festa sem complicar?</h1>
-        <p class="lead">Responda algumas perguntas rápidas e a IA ajuda a transformar suas ideias em uma festa bonita, organizada e possível de executar.</p>
+        <h1>Prepare uma festa especial com menos correria</h1>
+        <p class="lead">O Agente Festeiro ajuda famílias a planejar melhor a comemoração, organizar informações para convidados e criar memórias inesquecíveis usando as facilidades do mundo digital.</p>
         <div class="home-options">
           <button class="route-card planner featured" data-action="start">
             <span class="route-eyebrow">Assistente</span>
             <strong>Começar planejamento</strong>
-            <small>Uma conversa rápida para escolher o caminho da festa e montar uma experiência personalizada.</small>
+            <small>Conte uma vez os detalhes da festa e receba caminhos, checklist, convite, RSVP e ideias de experiências para encantar convidados.</small>
           </button>
           <div class="demo-area">
-            <p class="micro"><strong>Demos de sites personalizados</strong></p>
+            <p class="micro"><strong>Demos de experiências personalizadas</strong></p>
             <div class="demo-grid">
               <a class="route-card luiza" href="/festa-luiza/">
-                <span class="route-eyebrow">Demo</span>
+                <span class="route-eyebrow">Restrito</span>
                 <strong>Festa da Luiza</strong>
-                <small>Convite, segurança, galeria e memórias da festa.</small>
-              </a>
-              <a class="route-card luma" href="/festa-luma/">
-                <span class="route-eyebrow">Demo</span>
-                <strong>Festa da Luma</strong>
-                <small>Tema Minnie com RSVP, quiz, mural e cápsula.</small>
+                <small>Site real com acesso protegido por senha, galeria e memórias da festa.</small>
               </a>
               <a class="route-card leonidas" href="/festa-leonidas/">
-                <span class="route-eyebrow">Demo nova</span>
+                <span class="route-eyebrow">Demo</span>
                 <strong>Festa do Leonidas</strong>
-                <small>Futebol, 5 anos e uma festa inspirada no tricolor.</small>
+                <small>Exemplo aberto de experiência no dia da festa, com futebol, fotos, recados e brincadeiras.</small>
               </a>
             </div>
           </div>
         </div>
-        <p class="micro">Leve, rápido e pensado para reduzir dúvidas.</p>
+        <p class="micro">Menos repetição de informações com fornecedores, mais clareza para convidados e mais cuidado com as memórias da família.</p>
       </div>
     </section>
   `;
@@ -339,10 +331,30 @@ function ThemeSuggestionCard(theme, index) {
       <p class="micro">${escapeHtml(theme.whyFits)}</p>
       <div class="card-actions">
         <button class="button primary" data-action="choose-theme" data-index="${index}">Escolher caminho</button>
-        <button class="button secondary" data-action="refine-theme" data-index="${index}">Refinar com IA</button>
       </div>
     </article>
   `;
+}
+
+function PathRefinementChoiceStep() {
+  const theme = state.selectedTheme || {};
+  return StepShell(`
+    <div class="assistant-layout">
+      <aside class="assistant-card">
+        <p><strong>Caminho escolhido:</strong> ${escapeHtml(theme.name || "Festa personalizada")}</p>
+        <p class="micro">${escapeHtml(theme.whyFits || "Um caminho possível para sua família avançar com mais clareza.")}</p>
+      </aside>
+      <section class="question-card">
+        <h2>Quer deixar com o jeitinho da sua família?</h2>
+        <p class="lead">A IA pode fazer 2 ou 3 perguntas rápidas e trazer dicas personalizadas para deixar a festa ainda mais surpreendente, prática e possível de executar.</p>
+        <div class="cta-row">
+          <button class="button primary" data-action="start-path-refine">Sim, refinar com IA</button>
+          <button class="button secondary" data-action="skip-path-refine">Seguir com este caminho</button>
+          <button class="button ghost" data-action="back-to-suggestions">Escolher outro caminho</button>
+        </div>
+      </section>
+    </div>
+  `, "Caminho", 100);
 }
 
 function AIPersonalizationPanel() {
@@ -710,7 +722,7 @@ function FlowRoadmap() {
     { key: "preview", label: "Prévia" },
     { key: "briefing", label: "Envio" }
   ];
-  const activeKey = state.screen === "confirm" ? "refine" : state.screen === "success" ? "briefing" : state.screen;
+  const activeKey = state.screen === "confirm" ? "refine" : state.screen === "success" ? "briefing" : state.screen === "path" ? "suggestions" : state.screen;
   const activeIndex = Math.max(0, steps.findIndex(step => step.key === activeKey));
   return `
     <nav class="flow-roadmap" aria-label="Etapas do assistente">
@@ -768,7 +780,9 @@ function handleClick(event) {
   if (action === "skip-investment") return setInvestment("Prefiro não informar agora");
   if (action === "back-to-quiz") return setState({ screen: "quiz", questionIndex: Math.max(0, questions.length - 1) });
   if (action === "back-to-suggestions") return setState({ screen: "suggestions", loading: "", error: "" });
-  if (action === "choose-theme" || action === "refine-theme") return startRefinement(state.suggestions[index]);
+  if (action === "choose-theme") return choosePath(state.suggestions[index]);
+  if (action === "start-path-refine") return startRefinement(state.selectedPath || state.selectedTheme);
+  if (action === "skip-path-refine") return usePathWithoutRefinement();
   if (action === "refinement-choice") return setState({
     refinementAnswers: { ...(state.refinementAnswers || {}), [target.dataset.field]: value },
     finalRecommendation: null,
@@ -868,6 +882,23 @@ function chooseTheme(theme, personalization = null) {
   });
 }
 
+function choosePath(path) {
+  const selected = normalizeTheme(path);
+  setState({
+    screen: "path",
+    selectedTheme: selected,
+    selectedPath: path,
+    refinementAnswers: {},
+    refinementQuestions: [],
+    finalRecommendation: null,
+    aiPersonalization: null,
+    confirmation: {},
+    preview: null,
+    briefing: null,
+    error: ""
+  });
+}
+
 function startRefinement(path) {
   const selected = normalizeTheme(path);
   const refinementQuestions = selectRefinementQuestions(state.answers, path || selected);
@@ -879,6 +910,20 @@ function startRefinement(path) {
     refinementQuestions,
     finalRecommendation: null,
     aiPersonalization: null,
+    error: ""
+  });
+}
+
+function usePathWithoutRefinement() {
+  const finalRecommendation = generateFinalRecommendation(state.selectedTheme, state.answers, {}, []);
+  const confirmation = buildConfirmation(state.selectedTheme, finalRecommendation);
+  setState({
+    screen: "confirm",
+    finalRecommendation,
+    aiPersonalization: finalRecommendation,
+    confirmation,
+    preview: null,
+    briefing: null,
     error: ""
   });
 }
@@ -1240,7 +1285,7 @@ function generateFinalRecommendation(baseTheme, quizAnswers = {}, refinementAnsw
         : `${base.name} da ${childName}`;
   const simplePlace = ["Casa", "Salão do condomínio", "Escola"].includes(place);
   const priorities = uniqueList([
-    "Convite digital com RSVP",
+    "Convite com RSVP",
     isFootball || /brincadeiras|divertida/i.test(`${style} ${mainHelp}`) ? "Brincadeira principal da festa" : "Roteiro simples do parabéns",
     /decoração/i.test(mainHelp) ? "Direção de decoração fácil de executar" : isEmotional ? "Fotos e álbum de memórias" : "Decoração simples no tema",
     /bolo|doces/i.test(mainHelp) ? "Referências para bolo e doces" : isEmotional ? "Mural de recados" : "Organização dos convidados",
@@ -1319,7 +1364,7 @@ function generateExperiencePreview(confirmedTheme, quizAnswers, aiPersonalizatio
       "Parabéns com momento especial da família",
       "Agradecimento e álbum de memórias depois da festa"
     ].join("\n"),
-    conceptSummary: refined.whyFits || refined.concept || `Uma experiência digital clean para transformar o tema ${themeName} em convite, organização no dia e memória pós-festa.`,
+    conceptSummary: refined.whyFits || refined.concept || `Uma experiência de festa para transformar o tema ${themeName} em convite, organização no dia e memória pós-festa.`,
     palette,
     paletteText: palette.map(color => color.name).join(", "),
     visualStyle: refined.decorIdea || `Visual acolhedor, moderno e fácil de adaptar ao tema ${themeName}.`,
