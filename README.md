@@ -9,7 +9,7 @@ Fluxo:
 3. Geracao de 3 sugestoes de tema com custo e dificuldade estimados.
 4. Refinamento com IA opcional, com perguntas rapidas, pistas afetivas e uma recomendacao final.
 5. Confirmacao editavel do tema final.
-6. Escolha transparente dos itens da experiencia: padrao, recomendado e sofisticado, incluindo guia de presentes quando fizer sentido.
+6. Montagem da experiencia da festa: Essencial, Mais escolhido e Experiencias especiais, incluindo ideias de presentes quando fizer sentido.
 7. Previa conceitual editavel: conceito, visual, secoes, interacoes, atividades e pontos de atencao.
 8. Briefing para avaliacao com detalhes da crianca, guia de presentes, copia, edicao e envio por email.
 

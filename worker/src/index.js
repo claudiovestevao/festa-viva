@@ -356,18 +356,18 @@ function emailHtml(submission) {
   const developmentBriefing = submission.developmentBriefing || {};
   const refinement = submission.refinementAnswers || {};
   const giftGuide = submission.giftGuide || {};
-  const standard = (submission.featureModules || []).filter(module => module.tier === "standard");
-  const recommended = (submission.featureModules || []).filter(module => module.tier === "recommended");
-  const sophisticated = (submission.featureModules || []).filter(module => module.tier === "sophisticated");
+  const essential = (submission.featureModules || []).filter(module => module.tier === "standard");
+  const mostChosen = (submission.featureModules || []).filter(module => module.tier === "recommended");
+  const special = (submission.featureModules || []).filter(module => module.tier === "sophisticated");
   return `<!doctype html><html><body style="font-family:Arial,sans-serif;color:#24151c">
     <h1>${submission.kind === "production" ? "Enviar para producao" : "Solicitar orcamento"}</h1>
     <p><b>ID:</b> ${submission.id}</p>
     <p><b>Contato:</b> ${escapeHtml(submission.contact.name)} | ${escapeHtml(submission.contact.email)} | ${escapeHtml(submission.contact.phone)}</p>
     <p><b>Buffet/codigo:</b> ${escapeHtml(submission.buffetCode || brief.buffet)}</p>
     <h2>Itens da experiencia</h2>
-    <p><b>Padrao:</b> ${escapeHtml(standard.map(module => module.name).join(", ") || "Nenhum")}</p>
-    <p><b>Recomendados:</b> ${escapeHtml(recommended.map(module => module.name).join(", ") || "Nenhum")}</p>
-    <p><b>Sofisticados:</b> ${escapeHtml(sophisticated.map(module => module.name).join(", ") || "Nenhum")}</p>
+    <p><b>Essencial:</b> ${escapeHtml(essential.map(module => module.name).join(", ") || "Nenhum")}</p>
+    <p><b>Mais escolhido:</b> ${escapeHtml(mostChosen.map(module => module.name).join(", ") || "Nenhum")}</p>
+    <p><b>Experiencias especiais:</b> ${escapeHtml(special.map(module => module.name).join(", ") || "Nenhuma")}</p>
     <h2>Detalhes afetivos</h2>
     <p><b>Dinamica:</b> ${escapeHtml(refinement.energy || "Nao informado")}</p>
     <p><b>Prioridade:</b> ${escapeHtml(refinement.priority || "Nao informado")}</p>

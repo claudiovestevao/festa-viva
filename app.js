@@ -53,20 +53,25 @@ const questions = [
 ];
 
 const featureModules = [
-  { id: "invite", name: "Convite digital", tier: "standard", description: "Convite com tema, data, horário, local e contagem regressiva.", section: "Convite digital com contagem regressiva", interaction: "Compartilhamento simples do convite" },
-  { id: "rsvp", name: "Convidados + RSVP", tier: "standard", description: "Lista de convidados, confirmação por família e contagem de adultos/crianças.", section: "Confirmação de presença", interaction: "Contagem por família para os pais" },
-  { id: "gallery", name: "Fotos com aprovação", tier: "standard", description: "Convidados enviam fotos e os pais aprovam antes de virar retrospectiva.", section: "Galeria de fotos com aprovação", interaction: "Upload de fotos moderado" },
-  { id: "story", name: "História da criança", tier: "standard", description: "Linha do tempo com fotos, marcos e momentos especiais.", section: "História da criança", interaction: "Linha do tempo afetiva" },
-  { id: "quiz", name: "Quiz da criança", tier: "recommended", description: "Perguntas rápidas para brincar com convidados no dia da festa.", section: "Quiz sobre a criança", interaction: "Ranking leve do quiz" },
-  { id: "messages", name: "Mural de recados", tier: "recommended", description: "Mensagens dos convidados com aprovação dos pais.", section: "Mural de recados", interaction: "Recados afetivos para a família" },
-  { id: "capsule", name: "Cápsula do tempo", tier: "recommended", description: "Mensagens para a criança ler no futuro.", section: "Cápsula do tempo", interaction: "Pergunta afetiva para o futuro" },
-  { id: "album", name: "Álbum pós-festa", tier: "recommended", description: "Página de lembranças depois da festa, com fotos aprovadas.", section: "Álbum pós-festa", interaction: "Agradecimento pós-festa" },
-  { id: "missions", name: "Missões da festa", tier: "recommended", description: "Desafios simples para convidados criarem fotos e memórias.", section: "Missões da festa", interaction: "Missões guiadas para convidados" },
-  { id: "menu", name: "Cardápio", tier: "recommended", description: "Cardápio do buffet ou da festa dentro do site.", section: "Cardápio", interaction: "Consulta rápida do cardápio" },
-  { id: "screen", name: "Modo telão", tier: "sophisticated", description: "Fotos, recados e ranking em uma tela durante o evento.", section: "Modo telão para o dia da festa", interaction: "Telão com recados, fotos e ranking" },
-  { id: "customGame", name: "Jogo personalizado", tier: "sophisticated", description: "Uma brincadeira digital sob medida para o tema.", section: "Jogo personalizado", interaction: "Mini jogo temático" },
-  { id: "giftGuide", name: "Guia de presentes", tier: "sophisticated", description: "Tamanhos, calçado e ideias do que a criança gosta ou prefere evitar.", section: "Guia de presentes", interaction: "Convidados consultam sugestões antes de comprar presente" },
-  { id: "messaging", name: "Disparos por WhatsApp/e-mail", tier: "sophisticated", description: "Convites e lembretes enviados por canais oficiais.", section: "Convites e lembretes automatizados", interaction: "Mensagem de convite e lembrete" }
+  { id: "invite", name: "Convite digital", tier: "standard", description: "Convite com tema da festa, data, horário, local e botão de confirmação.", section: "Convite digital", interaction: "Confirmação de presença direto pelo convite" },
+  { id: "rsvp", name: "Convidados + RSVP", tier: "standard", description: "Organize adultos e crianças, acompanhe confirmações e evite surpresas no dia.", section: "Convidados e confirmação de presença", interaction: "Contagem por família para os pais" },
+  { id: "story", name: "História da criança", tier: "standard", description: "Uma página especial contando a personalidade, os gostos e os momentos marcantes da criança.", section: "História da criança", interaction: "Conteúdo afetivo para família e convidados" },
+  { id: "gallery", name: "Fotos com aprovação", tier: "standard", description: "Os pais escolhem quais fotos entram na retrospectiva ou página da festa.", section: "Fotos com aprovação", interaction: "Envio de fotos com aprovação dos pais" },
+  { id: "messages", name: "Mural de recados", tier: "recommended", description: "Mensagens carinhosas dos convidados para guardar como lembrança.", section: "Mural de recados", interaction: "Recados afetivos para a família" },
+  { id: "quiz", name: "Quiz da criança", tier: "recommended", description: "Perguntas rápidas e divertidas para os convidados brincarem durante a festa.", section: "Quiz da criança", interaction: "Brincadeira rápida para convidados" },
+  { id: "missions", name: "Missões da festa", tier: "recommended", description: "Desafios simples para aproximar convidados e criar fotos e memórias.", section: "Missões da festa", interaction: "Missões leves para criar memórias" },
+  { id: "menu", name: "Cardápio", tier: "recommended", description: "Cardápio infantil, buffet ou opções da festa em uma página fácil de consultar.", section: "Cardápio", interaction: "Consulta rápida do cardápio" },
+  { id: "album", name: "Álbum de memórias", tier: "recommended", description: "Uma página para reunir os melhores registros depois da comemoração.", section: "Álbum de memórias", interaction: "Agradecimento e melhores registros pós-festa" },
+  { id: "giftGuide", name: "Ideias de presentes", tier: "recommended", description: "Sugestões por idade, tamanho, preferências e fase da criança.", section: "Ideias de presentes", interaction: "Convidados consultam sugestões antes de comprar presente" },
+  { id: "capsule", name: "Cápsula do tempo", tier: "recommended", description: "Mensagens para a criança ler no futuro.", section: "Cápsula do tempo", interaction: "Mensagem afetiva para o futuro" },
+  { id: "screen", name: "Modo telão", tier: "sophisticated", description: "Fotos, mensagens, quiz e ranking para exibir durante a festa.", section: "Modo telão", interaction: "Telão com fotos, mensagens e quiz" },
+  { id: "retrospective", name: "Retrospectiva personalizada", tier: "sophisticated", description: "Uma retrospectiva afetiva com fotos, frases e momentos importantes da criança.", section: "Retrospectiva personalizada", interaction: "Retrospectiva afetiva para a família" },
+  { id: "partyFlow", name: "Roteiro da festa", tier: "sophisticated", description: "Sugestão de ordem dos momentos: chegada, parabéns, brincadeiras, fotos e encerramento.", section: "Roteiro da festa", interaction: "Roteiro simples para orientar a comemoração" },
+  { id: "decorAI", name: "Sugestão de decoração por IA", tier: "sophisticated", description: "Ideias de cores, mesa, lembrancinhas e detalhes alinhados ao tema escolhido.", section: "Sugestão de decoração por IA", interaction: "Inspirações práticas para decoração" },
+  { id: "partyFavors", name: "Lembrancinhas personalizadas", tier: "sophisticated", description: "Ideias de lembrancinhas criativas, úteis e alinhadas ao tema da festa.", section: "Lembrancinhas personalizadas", interaction: "Sugestões de lembrancinhas para convidados" },
+  { id: "messaging", name: "Lembretes para convidados", tier: "sophisticated", description: "Envio de lembretes e informações importantes por canais oficiais.", section: "Lembretes para convidados", interaction: "Lembretes por canais oficiais" },
+  { id: "customGame", name: "Jogo personalizado", tier: "sophisticated", description: "Uma brincadeira digital simples criada com base no tema da festa.", section: "Jogo personalizado", interaction: "Mini jogo temático" },
+  { id: "timeline", name: "Linha do tempo da criança", tier: "sophisticated", description: "Momentos marcantes da criança organizados de forma visual e afetiva.", section: "Linha do tempo da criança", interaction: "Linha do tempo afetiva" }
 ];
 
 const initialState = {
@@ -393,54 +398,44 @@ function ThemeConfirmationStep() {
 }
 
 function FeatureSelectionStep() {
-  const recommended = recommendedModuleIds(currentConfirmation(), state.answers);
   const standard = featureModules.filter(module => module.tier === "standard");
   const recommendedItems = featureModules.filter(module => module.tier === "recommended");
   const sophisticated = featureModules.filter(module => module.tier === "sophisticated");
   return StepShell(`
     <div class="section-title">
-      <h2>O que sua festa vai ter?</h2>
-      <p class="lead">Já deixei marcada uma seleção inicial, normalmente escolhida por outras famílias. Você pode ajustar antes da prévia.</p>
+      <h2>Monte a experiência da festa</h2>
+      <p class="lead">Escolha o que faz sentido para a festa da sua família. Alguns itens já vêm incluídos para facilitar o planejamento, e outros podem deixar a comemoração mais divertida, memorável ou especial.</p>
     </div>
-    <section class="panel">
-      <div class="module-note">
-        <strong>Transparente etapa por etapa</strong>
-        <p>Os itens padrão fazem parte da experiência base. Os recomendados ajudam a encantar os convidados. Os sofisticados entram no briefing para o time avaliar prazo, viabilidade e complexidade.</p>
-      </div>
-      <div class="cta-row compact">
-        <button class="button secondary" data-action="select-recommended-modules">Restaurar seleção sugerida</button>
-        <span class="micro">${recommended.length} itens sugeridos para este perfil.</span>
-      </div>
-    </section>
     <div class="module-columns three">
-      <section>
-        <h3>Padrão</h3>
-        <p class="micro">Já vem na proposta base.</p>
+      <section class="module-section">
+        <h3>Essencial</h3>
+        <p class="micro">Já vem incluído para sua festa começar organizada.</p>
         <div class="module-grid">
-          ${standard.map(module => FeatureModuleCard(module, recommended)).join("")}
+          ${standard.map(module => FeatureModuleCard(module)).join("")}
         </div>
       </section>
-      <section>
-        <h3>Recomendado</h3>
-        <p class="micro">Normalmente escolhido por outras famílias.</p>
+      <section class="module-section">
+        <h3>Mais escolhido</h3>
+        <p class="micro">Itens que costumam deixar a festa mais divertida e completa.</p>
         <div class="module-grid">
-          ${recommendedItems.map(module => FeatureModuleCard(module, recommended)).join("")}
+          ${recommendedItems.map(module => FeatureModuleCard(module)).join("")}
         </div>
       </section>
-      <section>
-        <h3>Sofisticado</h3>
-        <p class="micro">Pode exigir avaliação do time.</p>
+      <section class="module-section">
+        <h3>Experiências especiais</h3>
+        <p class="micro">Ideias para transformar a festa em uma lembrança ainda mais marcante.</p>
         <div class="module-grid">
-          ${sophisticated.map(module => FeatureModuleCard(module, recommended)).join("")}
+          ${sophisticated.map(module => FeatureModuleCard(module)).join("")}
         </div>
       </section>
     </div>
     ${state.selectedModules.includes("giftGuide") ? GiftGuidePanel() : ""}
+    <p class="micro final-note">Você poderá ajustar tudo na próxima etapa antes de enviar para criação da festa personalizada.</p>
     <div class="cta-row">
       <button class="button primary" data-action="continue-to-preview" ${state.selectedModules.length ? "" : "disabled"}>Gerar prévia</button>
       <button class="button secondary" data-action="back-to-confirm">Voltar ao tema</button>
     </div>
-  `, "Itens da festa", 100);
+  `, "Experiência", 100);
 }
 
 function GiftGuidePanel() {
@@ -448,7 +443,7 @@ function GiftGuidePanel() {
   return `
     <section class="panel gift-panel">
       <div class="module-note">
-        <strong>Guia de presentes para convidados</strong>
+        <strong>Ideias de presentes para convidados</strong>
         <p>Preencha só o que já souber. Isso pode virar uma área simples no site para evitar presente repetido, tamanho errado ou brinquedo que não combina.</p>
       </div>
       <div class="form-grid two gift-fields">
@@ -464,24 +459,22 @@ function GiftGuidePanel() {
   `;
 }
 
-function FeatureModuleCard(module, recommended = []) {
+function FeatureModuleCard(module) {
   const active = state.selectedModules.includes(module.id);
-  const suggested = recommended.includes(module.id);
   const locked = module.tier === "standard";
-  const label = module.tier === "standard" ? "Padrão" : module.tier === "recommended" ? "Recomendado" : "Sofisticado";
+  const label = module.tier === "standard" ? "Incluído" : module.tier === "recommended" ? "Mais escolhido" : "Experiência especial";
   return `
-    <button class="module-card ${active ? "active" : ""} ${locked ? "locked" : ""}" data-action="toggle-module" data-module="${module.id}">
+    <button class="module-card ${active ? "active" : ""} ${locked ? "locked" : ""}" data-action="toggle-module" data-module="${module.id}" aria-pressed="${active ? "true" : "false"}">
       <span class="module-badge ${module.tier}">${label}</span>
       <strong>${escapeHtml(module.name)}</strong>
       <small>${escapeHtml(module.description)}</small>
-      ${locked ? `<em>Já incluído</em>` : suggested ? `<em>Normalmente escolhido</em>` : ""}
     </button>
   `;
 }
 
 function ModuleSummary(modules) {
   if (!modules.length) {
-    return `<p class="micro">Escolha pelo menos um item para a experiência. Você pode começar pela seleção sugerida.</p>`;
+    return `<p class="micro">Escolha pelo menos um item para montar a experiência da festa.</p>`;
   }
   const standard = modules.filter(module => module.tier === "standard");
   const recommended = modules.filter(module => module.tier === "recommended");
@@ -489,15 +482,15 @@ function ModuleSummary(modules) {
   return `
     <div class="module-summary">
       <div>
-        <span class="module-badge standard">Padrão</span>
+        <span class="module-badge standard">Incluído</span>
         <p>${standard.length ? standard.map(module => module.name).join(", ") : "Nenhum selecionado."}</p>
       </div>
       <div>
-        <span class="module-badge recommended">Recomendado</span>
+        <span class="module-badge recommended">Mais escolhido</span>
         <p>${recommended.length ? recommended.map(module => module.name).join(", ") : "Nenhum selecionado."}</p>
       </div>
       <div>
-        <span class="module-badge sophisticated">Sofisticado</span>
+        <span class="module-badge sophisticated">Experiência especial</span>
         <p>${sophisticated.length ? sophisticated.map(module => module.name).join(", ") : "Nenhum selecionado."}</p>
       </div>
     </div>
@@ -535,7 +528,7 @@ function ExperiencePreview() {
     </section>
     <div class="cta-row">
       <button class="button primary" data-action="generate-briefing">Gerar briefing</button>
-      <button class="button secondary" data-action="back-to-features">Voltar aos itens da festa</button>
+      <button class="button secondary" data-action="back-to-features">Voltar à experiência</button>
     </div>
   `, "Prévia", 100);
 }
@@ -618,7 +611,7 @@ function FlowRoadmap() {
   const steps = [
     { key: "quiz", label: "Dados" },
     { key: "theme", label: "Tema" },
-    { key: "features", label: "Itens" },
+    { key: "features", label: "Experiência" },
     { key: "preview", label: "Prévia" },
     { key: "briefing", label: "Envio" }
   ];
@@ -809,7 +802,7 @@ function toggleModule(moduleId) {
   const module = featureModules.find(item => item.id === moduleId);
   if (!module) return;
   if (module.tier === "standard") {
-    showToast("Esse item já faz parte do padrão da experiência.");
+    showToast("Esse item já vem incluído para sua festa começar organizada.");
     return;
   }
   const selectedModules = state.selectedModules.includes(moduleId)
@@ -820,7 +813,7 @@ function toggleModule(moduleId) {
 
 function selectRecommendedModules() {
   setState({
-    selectedModules: recommendedModuleIds(currentConfirmation(), state.answers),
+    selectedModules: essentialModuleIds(),
     preview: null,
     briefing: null
   });
@@ -1004,10 +997,10 @@ function generateExperiencePreview(confirmedTheme, quizAnswers, aiPersonalizatio
     activitiesText: activities.join("\n"),
     invitationSuggestion: `Convite digital com o nome da experiência, data, horário, local, RSVP e um texto curto no clima de ${themeName}.`,
     modulesText: modules.map(module => module.name).join("\n"),
-    complexity: sophisticatedCount ? "Média, com itens sofisticados para avaliação" : (budget === "Baixo" || simple ? "Baixa a média" : "Média"),
+    complexity: sophisticatedCount ? "Média, com experiências especiais para avaliação" : (budget === "Baixo" || simple ? "Baixa a média" : "Média"),
     viabilityNotes: simple
-      ? "Priorizar componentes simples, pouco peso visual e interações que funcionem bem no celular. Itens sofisticados seguem para avaliação."
-      : "Validar volume de convidados, itens sofisticados, moderação de fotos e prazo de produção."
+      ? "Priorizar uma experiência leve, bonita no celular e fácil de usar. Experiências especiais seguem para avaliação."
+      : "Validar volume de convidados, experiências especiais, aprovação de fotos e prazo de produção."
   };
 }
 
@@ -1065,14 +1058,14 @@ function generateDevelopmentBriefing(confirmedTheme, quizAnswers, aiPersonalizat
     `- Jeitinho ou história engraçada: ${refinement.personalityStory || "Não informado"}`,
     `- Pistas de presente citadas no chat: ${refinement.giftHints || "Não informado"}`,
     "",
-    "Itens padrão da experiência:",
-    ...(standardModules.length ? standardModules.map(module => `- ${module.name}: ${module.description}`) : ["- Nenhum item padrão selecionado."]),
+    "Essencial incluído:",
+    ...(standardModules.length ? standardModules.map(module => `- ${module.name}: ${module.description}`) : ["- Nenhum item essencial selecionado."]),
     "",
-    "Itens recomendados selecionados:",
-    ...(recommendedModules.length ? recommendedModules.map(module => `- ${module.name}: ${module.description}`) : ["- Nenhum item recomendado selecionado."]),
+    "Mais escolhido selecionado:",
+    ...(recommendedModules.length ? recommendedModules.map(module => `- ${module.name}: ${module.description}`) : ["- Nenhum item de mais escolhido selecionado."]),
     "",
-    "Itens sofisticados para avaliação do time:",
-    ...(sophisticatedModules.length ? sophisticatedModules.map(module => `- ${module.name}: ${module.description}`) : ["- Nenhum item sofisticado selecionado."]),
+    "Experiências especiais para avaliação do time:",
+    ...(sophisticatedModules.length ? sophisticatedModules.map(module => `- ${module.name}: ${module.description}`) : ["- Nenhuma experiência especial selecionada."]),
     "",
     ...(wantsGiftGuide ? [
       "Guia de presentes:",
@@ -1097,8 +1090,8 @@ function generateDevelopmentBriefing(confirmedTheme, quizAnswers, aiPersonalizat
     "",
     "Transparência comercial:",
     "- O responsável selecionou os itens acima no assistente.",
-    "- Itens padrão e recomendados podem seguir conforme o plano contratado.",
-    "- Itens sofisticados precisam de confirmação de viabilidade, prazo e complexidade.",
+    "- Itens essenciais e mais escolhidos podem seguir conforme o plano contratado.",
+    "- Experiências especiais precisam de confirmação de viabilidade, prazo e complexidade.",
     "",
     "Pontos de atenção para viabilidade:",
     preview.viabilityNotes,
@@ -1121,14 +1114,11 @@ function selectedModuleDetails(ids = state.selectedModules) {
 }
 
 function recommendedModuleIds(confirmation = currentConfirmation(), answers = state.answers) {
-  const ids = ["invite", "rsvp", "gallery", "story", "messages", "capsule", "album"];
-  const interests = answers.interests || [];
-  const budget = confirmation.budget || answers.budget || "";
+  return essentialModuleIds();
+}
 
-  if (interests.some(item => ["Música", "Dança", "Games", "Brincadeiras", "Futebol"].includes(item))) ids.push("quiz");
-  if (interests.some(item => ["Brincadeiras", "Games", "Faz de conta"].includes(item)) && budget === "Alto") ids.push("missions");
-  if (budget === "Alto") ids.push("screen");
-  return uniqueList(ids);
+function essentialModuleIds() {
+  return featureModules.filter(module => module.tier === "standard").map(module => module.id);
 }
 
 function uniqueList(items) {
