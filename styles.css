@@ -685,6 +685,64 @@ p {
   line-height: 1.05;
 }
 
+.success-hero {
+  display: grid;
+  gap: 10px;
+  margin: 16px 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 20px;
+  background: linear-gradient(135deg, #fff, #fff2f8 55%, #eef8f3);
+  box-shadow: var(--shadow);
+}
+
+.success-hero h2 {
+  margin: 0;
+  font-size: clamp(32px, 9vw, 52px);
+  line-height: 1;
+}
+
+.checklist-panel {
+  padding: 18px;
+}
+
+.section-title.compact {
+  margin-top: 0;
+}
+
+.checklist-print {
+  display: grid;
+  gap: 12px;
+}
+
+.checklist-print > h1 {
+  margin: 0;
+  font-size: clamp(24px, 7vw, 36px);
+}
+
+.checklist-section {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px;
+  background: #fff;
+}
+
+.checklist-section h2 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+
+.checklist-section ul {
+  margin: 0;
+  padding-left: 20px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.checklist-section li + li {
+  margin-top: 7px;
+}
+
 .preview-hero {
   min-height: 230px;
   border-radius: 18px;

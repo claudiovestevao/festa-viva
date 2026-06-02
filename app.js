@@ -9,10 +9,23 @@ const questions = [
     placeholder: "Ex: Luiza"
   },
   {
+    id: "planningStage",
+    prompt: "Em que momento você está no planejamento da festa?",
+    type: "single",
+    options: ["Estou começando do zero.", "Já tenho buffet ou espaço contratado.", "Já tenho tema definido.", "Só preciso resolver alguns detalhes.", "Estou apenas buscando ideias."]
+  },
+  {
     id: "age",
     prompt: "Quantos anos ela vai fazer?",
     type: "single",
     options: ["1 ano", "2 anos", "3 anos", "4 anos", "5 anos", "6 anos", "7 anos", "8 anos", "9 anos", "10 anos", "Mais de 10 anos"]
+  },
+  {
+    id: "cityRegion",
+    prompt: "Em qual cidade ou região será a festa?",
+    type: "text",
+    placeholder: "Ex: São Paulo - Zona Sul",
+    help: "Não precisa informar endereço completo."
   },
   {
     id: "eventDate",
@@ -48,23 +61,11 @@ const questions = [
     options: ["Já tenho um tema", "Quero ajuda da IA", "Ainda não sei"]
   },
   {
-    id: "style",
-    prompt: "Qual estilo combina mais com a festa que você imagina?",
-    type: "single",
-    options: ["Simples e afetiva", "Divertida e cheia de brincadeiras", "Bonita e bem organizada", "Memorável e personalizada", "Sofisticada e especial", "Ainda não sei"]
-  },
-  {
-    id: "mainHelp",
-    prompt: "O que você mais quer que a IA resolva para você?",
-    type: "single",
-    options: ["Escolher o melhor tema", "Organizar a festa", "Criar convite e confirmação", "Pensar nas brincadeiras", "Criar uma experiência emocionante", "Economizar tempo e dinheiro", "Gerar uma prévia bonita"]
-  },
-  {
-    id: "mustHave",
-    prompt: "O que não pode faltar nessa festa?",
+    id: "agentHelpToday",
+    prompt: "O que você quer que o Agente Festeiro te ajude a resolver hoje?",
     type: "multi",
-    max: 3,
-    options: ["Convite bonito", "Confirmação dos convidados", "Fotos e lembranças", "Brincadeiras para as crianças", "Comida boa", "Momento emocionante", "Decoração bonita", "Retrospectiva", "Mural de recados", "Organização simples", "Ainda não sei"]
+    max: 4,
+    options: ["Escolher ou refinar o tema.", "Organizar a festa inteira.", "Criar convite ou site da festa.", "Resolver lembrancinhas.", "Pensar em decoração.", "Encontrar bolo ou doces.", "Buscar recreação ou atrações.", "Montar um checklist.", "Outro."]
   }
 ];
 
@@ -110,6 +111,7 @@ const initialState = {
   selectedModules: [],
   giftGuide: { clothingSize: "", shoeSize: "", likes: "", avoids: "", notes: "" },
   contact: { name: "", email: "", phone: "", buffetCode: "" },
+  submissionResult: null,
   loading: "",
   error: ""
 };
@@ -164,7 +166,8 @@ function render() {
     confirm: FinalRecommendationStep,
     features: FeatureSelectionStep,
     preview: ExperiencePreview,
-    briefing: DevelopmentBriefingPreview
+    briefing: DevelopmentBriefingPreview,
+    success: SubmissionSuccessPage
   }[state.screen]();
 }
 
@@ -642,6 +645,47 @@ function EmailReviewStep() {
   `;
 }
 
+function SubmissionSuccessPage() {
+  const checklist = state.submissionResult?.checklist || generatePersonalizedChecklist();
+  return StepShell(`
+    <section class="success-hero">
+      <span class="route-eyebrow">Pedido recebido</span>
+      <h2>Obrigado por preencher tudo com carinho.</h2>
+      <p class="lead">Recebemos as informações da festa e retornaremos em até 48 horas com a avaliação da experiência personalizada.</p>
+      <p class="micro">Enquanto isso, preparei um checklist com base nas suas respostas para ajudar sua família a seguir sem perder o fio.</p>
+      ${state.submissionResult?.id ? `<p class="micro"><strong>ID do pedido:</strong> ${escapeHtml(state.submissionResult.id)}</p>` : ""}
+    </section>
+    <section class="panel checklist-panel">
+      <div class="section-title compact">
+        <h2>Checklist personalizado</h2>
+        <p class="micro">Use como guia rápido. Ele considera o momento do planejamento, local, cidade/região, tema, itens escolhidos e o que você pediu ajuda para resolver.</p>
+      </div>
+      ${ChecklistView(checklist)}
+      <div class="cta-row">
+        <button class="button primary" data-action="download-checklist">Baixar checklist em PDF</button>
+        <button class="button secondary" data-action="reset">Planejar outra festa</button>
+      </div>
+    </section>
+  `, "Checklist", 100);
+}
+
+function ChecklistView(checklist) {
+  return `
+    <div class="checklist-print" id="checklist-print">
+      <h1>${escapeHtml(checklist.title)}</h1>
+      <p>${escapeHtml(checklist.subtitle)}</p>
+      ${checklist.sections.map(section => `
+        <section class="checklist-section">
+          <h2>${escapeHtml(section.title)}</h2>
+          <ul>
+            ${section.items.map(item => `<li>${escapeHtml(item)}</li>`).join("")}
+          </ul>
+        </section>
+      `).join("")}
+    </div>
+  `;
+}
+
 function StepShell(content, label, progress) {
   return `
     <section class="screen">
@@ -666,7 +710,7 @@ function FlowRoadmap() {
     { key: "preview", label: "Prévia" },
     { key: "briefing", label: "Envio" }
   ];
-  const activeKey = state.screen === "confirm" ? "refine" : state.screen;
+  const activeKey = state.screen === "confirm" ? "refine" : state.screen === "success" ? "briefing" : state.screen;
   const activeIndex = Math.max(0, steps.findIndex(step => step.key === activeKey));
   return `
     <nav class="flow-roadmap" aria-label="Etapas do assistente">
@@ -746,6 +790,7 @@ function handleClick(event) {
   if (action === "copy-briefing") return copyBriefing();
   if (action === "toggle-edit") return setState({ briefingEditable: !state.briefingEditable });
   if (action === "send-email") return sendEmail();
+  if (action === "download-checklist") return downloadChecklistPdf();
 }
 
 function handleInput(event) {
@@ -947,6 +992,7 @@ async function copyBriefing() {
 
 async function sendEmail() {
   const briefing = state.briefing || generateDevelopmentBriefing(currentConfirmation(), state.answers, state.aiPersonalization, state.preview, state.selectedModules);
+  const checklist = generatePersonalizedChecklist();
   if (!state.contact.name || !state.contact.email) {
     showToast("Preencha nome e e-mail para retorno.");
     return;
@@ -966,10 +1012,10 @@ async function sendEmail() {
       finalRecommendation: state.finalRecommendation,
       giftGuide: state.giftGuide,
       featureModules: selectedModuleDetails(),
-      developmentBriefing: briefing
+      developmentBriefing: briefing,
+      checklist
     });
-    setState({ loading: "" });
-    showToast(`Briefing enviado. ID ${response.id}.`);
+    setState({ screen: "success", loading: "", submissionResult: { id: response.id, emailed: response.emailed, checklist } });
   } catch (error) {
     setState({ loading: "" });
     showToast(error.message || "Não foi possível enviar agora.");
@@ -1034,8 +1080,9 @@ function selectRefinementQuestions(answers = {}, selectedPath = {}) {
   const themeMode = answers.themeInterestMode || "";
   const themeText = String(answers.themeInterest || "").trim();
   const place = answers.place || "";
-  const mainHelp = answers.mainHelp || "";
-  const style = answers.style || "";
+  const planningStage = answers.planningStage || "";
+  const helpToday = answerText(answers.agentHelpToday || answers.mainHelp);
+  const style = selectedPath.name || selectedPath.whyFits || "";
   const investment = answers.investmentLevel || "";
   const bank = {
     likesToday: {
@@ -1124,14 +1171,17 @@ function selectRefinementQuestions(answers = {}, selectedPath = {}) {
     if (picked.length < 3 && bank[id] && !picked.some(question => question.id === id)) picked.push(bank[id]);
   });
   const needsThemeHelp = !themeText || ["Quero ajuda da IA", "Ainda não sei"].includes(themeMode);
-  const practical = pathKey === "practical" || /organizar|tempo|dinheiro|confirmação|convite/i.test(mainHelp);
-  const emotional = pathKey === "emotional" || /emocionante|prévia bonita/i.test(mainHelp) || /memorável/i.test(style);
-  const fun = pathKey === "fun" || /brincadeiras/i.test(mainHelp) || /divertida/i.test(style);
-  const budgetConcern = /econômico|tempo e dinheiro/i.test(`${investment} ${mainHelp}`);
+  const practical = pathKey === "practical" || /organizar|tempo|dinheiro|confirmação|convite|checklist|detalhes/i.test(`${helpToday} ${planningStage}`);
+  const emotional = pathKey === "emotional" || /emocionante|prévia bonita|memória|site|história/i.test(helpToday) || /memorável/i.test(style);
+  const fun = pathKey === "fun" || /brincadeiras|recreação|atrações|bolo|doces/i.test(helpToday) || /divertida/i.test(style);
+  const budgetConcern = /econômico|tempo e dinheiro|lembrancinhas|decoração/i.test(`${investment} ${helpToday}`);
   const homeLike = ["Casa", "Salão do condomínio", "Escola"].includes(place);
   const venueLike = ["Buffet infantil", "Restaurante", "Espaço de eventos"].includes(place);
 
   if (needsThemeHelp) add("likesToday", "themeDirection", "partyVibe");
+  if (/tema definido/i.test(planningStage)) add("partyVibe", "venueComplement", "focusFunMemory");
+  if (/buscando ideias/i.test(planningStage)) add("likesToday", "themeDirection", "partyVibe");
+  if (/detalhes/i.test(planningStage)) add("avoidOrg", "venueComplement", "helpLevel");
   if (practical) add("avoidOrg", "helpLevel", "scope");
   if (emotional) add("memoryGoal", "childPersonality", "familyMoment");
   if (budgetConcern) add("budgetPriority", "economicEssential", "scope");
@@ -1168,15 +1218,18 @@ function generateFinalRecommendation(baseTheme, quizAnswers = {}, refinementAnsw
   const childName = quizAnswers.childName || "criança";
   const age = quizAnswers.age || "idade informada";
   const place = quizAnswers.place || "local a definir";
+  const cityRegion = quizAnswers.cityRegion || "região a definir";
   const size = quizAnswers.size || "tamanho a definir";
-  const style = quizAnswers.style || "estilo a definir";
-  const mainHelp = quizAnswers.mainHelp || "organizar melhor a festa";
+  const planningStage = quizAnswers.planningStage || "momento do planejamento a definir";
+  const helpToday = answerText(quizAnswers.agentHelpToday || quizAnswers.mainHelp) || "organizar melhor a festa";
+  const style = base.name || "estilo a definir";
+  const mainHelp = helpToday;
   const investment = quizAnswers.investmentLevel || "sem faixa de investimento informada";
   const themeText = String(quizAnswers.themeInterest || "").trim();
   const quickAnswers = Object.values(refinementAnswers).join(" ").toLowerCase();
   const topic = (themeText || refinementAnswers.likesToday || base.name || "festa personalizada").trim();
   const isFootball = /futebol|bola|são paulo|sao paulo|tricolor|esporte/i.test(`${topic} ${quickAnswers}`);
-  const isEmotional = /memória|emoc|retrospectiva|história|mensagens|afetiva|personalizada/i.test(`${style} ${mainHelp} ${quickAnswers} ${base.name}`);
+  const isEmotional = /memória|emoc|retrospectiva|história|mensagens|afetiva|personalizada|site/i.test(`${style} ${mainHelp} ${quickAnswers} ${base.name}`);
   const isPractical = /prática|organizar|tempo|dinheiro|simples|econômico/i.test(`${base.name} ${mainHelp} ${investment} ${quickAnswers}`);
   const conceptName = isFootball
     ? "Pequeno Craque Tricolor"
@@ -1189,9 +1242,9 @@ function generateFinalRecommendation(baseTheme, quizAnswers = {}, refinementAnsw
   const priorities = uniqueList([
     "Convite digital com RSVP",
     isFootball || /brincadeiras|divertida/i.test(`${style} ${mainHelp}`) ? "Brincadeira principal da festa" : "Roteiro simples do parabéns",
-    isEmotional ? "Fotos e álbum de memórias" : "Decoração simples no tema",
-    quizAnswers.mustHave?.includes("Mural de recados") || isEmotional ? "Mural de recados" : "Organização dos convidados",
-    /retrospectiva/i.test(`${quickAnswers} ${quizAnswers.mustHave}`) ? "Retrospectiva personalizada" : "História da criança"
+    /decoração/i.test(mainHelp) ? "Direção de decoração fácil de executar" : isEmotional ? "Fotos e álbum de memórias" : "Decoração simples no tema",
+    /bolo|doces/i.test(mainHelp) ? "Referências para bolo e doces" : isEmotional ? "Mural de recados" : "Organização dos convidados",
+    /lembrancinhas/i.test(mainHelp) ? "Lembrancinhas alinhadas ao tema" : /retrospectiva|site/i.test(`${quickAnswers} ${mainHelp}`) ? "Retrospectiva personalizada" : "História da criança"
   ]).slice(0, 5);
   const avoid = [
     simplePlace ? "Evitar atividades demais se o espaço for pequeno." : "Evitar excesso de atrações competindo com o que o local já oferece.",
@@ -1204,7 +1257,7 @@ function generateFinalRecommendation(baseTheme, quizAnswers = {}, refinementAnsw
       : "Aproveitar a estrutura do local com convite, RSVP, história da criança, interação leve no dia e registros para o pós-festa.";
   return {
     conceptName,
-    whyFits: `${childName} vai fazer ${age}. Considerando ${place}, ${size}, o estilo ${style.toLowerCase()} e a ajuda desejada de ${mainHelp.toLowerCase()}, esse conceito equilibra beleza, organização e execução possível.`,
+    whyFits: `${childName} vai fazer ${age}. Considerando ${place} em ${cityRegion}, ${size}, o momento "${planningStage}" e o que a família quer resolver hoje, esse conceito equilibra beleza, organização e execução possível.`,
     executionPlan,
     priorities,
     avoid,
@@ -1223,6 +1276,7 @@ function generateExperiencePreview(confirmedTheme, quizAnswers, aiPersonalizatio
   const experienceName = confirmedTheme.experienceName || `Festa ${themeName}`;
   const childName = confirmedTheme.childName || quizAnswers.childName || "";
   const place = confirmedTheme.place || quizAnswers.place || "local a definir";
+  const cityRegion = confirmedTheme.cityRegion || quizAnswers.cityRegion || "";
   const refined = aiPersonalization || {};
   const simple = ["Casa", "Salão do condomínio", "Escola"].includes(place);
   const modules = selectedModuleDetails(selectedModules.length ? selectedModules : recommendedModuleIds(confirmedTheme, quizAnswers));
@@ -1252,7 +1306,7 @@ function generateExperiencePreview(confirmedTheme, quizAnswers, aiPersonalizatio
     childName,
     eventDate: confirmedTheme.eventDate || quizAnswers.eventDate || "Ainda não sei",
     eventTime: confirmedTheme.eventTime || quizAnswers.eventTime || "Ainda não sei",
-    place,
+    place: cityRegion ? `${place} - ${cityRegion}` : place,
     themeConcept: refined.conceptName || themeName,
     invitationText,
     childStory: confirmedTheme.childStory || `Uma página curta para contar o jeitinho de ${childName || "a criança"}, seus gostos atuais e uma história dessa fase.`,
@@ -1336,13 +1390,14 @@ function generateDevelopmentBriefing(confirmedTheme, quizAnswers, aiPersonalizat
     `- Data: ${confirmedTheme.eventDate || quizAnswers.eventDate || "Ainda não sei"}`,
     `- Horário: ${confirmedTheme.eventTime || quizAnswers.eventTime || "Ainda não sei"}`,
     `- Local: ${confirmedTheme.place || quizAnswers.place || "Ainda não sei"}`,
+    `- Cidade/região: ${confirmedTheme.cityRegion || quizAnswers.cityRegion || "Não informado"}`,
     `- Tamanho estimado: ${quizAnswers.size || "Ainda não sei"}`,
     "",
     "Preferência da família:",
+    `- Momento do planejamento: ${quizAnswers.planningStage || "Não informado"}`,
     `- Tema ou interesse: ${quizAnswers.themeInterest || quizAnswers.themeInterestMode || "Ainda não sei"}`,
-    `- Estilo desejado: ${confirmedTheme.style || quizAnswers.style || "Ainda não sei"}`,
-    `- Principal ajuda desejada: ${quizAnswers.mainHelp || "Não informado"}`,
-    `- O que não pode faltar: ${Array.isArray(quizAnswers.mustHave) && quizAnswers.mustHave.length ? quizAnswers.mustHave.join(", ") : "Não informado"}`,
+    `- Caminho/estilo escolhido: ${confirmedTheme.style || state.selectedPath?.name || "Ainda não sei"}`,
+    `- O que quer resolver hoje: ${answerText(quizAnswers.agentHelpToday || quizAnswers.mainHelp) || "Não informado"}`,
     `- Faixa de investimento: ${quizAnswers.investmentLevel || "Não informada"}`,
     `- Caminho escolhido: ${state.selectedPath?.name || confirmedTheme.selectedPathName || "Não informado"}`,
     "",
@@ -1425,6 +1480,149 @@ function generateDevelopmentBriefing(confirmedTheme, quizAnswers, aiPersonalizat
   return { subject, body };
 }
 
+function generatePersonalizedChecklist() {
+  const answers = state.answers || {};
+  const confirmation = currentConfirmation();
+  const modules = selectedModuleDetails();
+  const finalRecommendation = state.finalRecommendation || generateFinalRecommendation(state.selectedTheme, answers, state.refinementAnswers, refinementQuestions());
+  const helpToday = answerText(answers.agentHelpToday);
+  const stage = answers.planningStage || "momento a definir";
+  const place = answers.place || "local a definir";
+  const cityRegion = answers.cityRegion || "região a definir";
+  const theme = finalRecommendation.conceptName || confirmation.themeName || answers.themeInterest || "tema a definir";
+  const sections = [
+    {
+      title: "Próximos passos essenciais",
+      items: uniqueList([
+        stageChecklistItem(stage, theme),
+        answers.eventDate ? `Bloquear na agenda a data ${answers.eventDate} e revisar prazos a partir dela.` : "Definir a data para organizar convite, fornecedores e lembretes.",
+        `Confirmar o formato da festa em ${place}${cityRegion ? ` (${cityRegion})` : ""}.`,
+        `Validar o conceito "${theme}" com a família antes de comprar itens de decoração.`,
+        "Separar fotos da criança e 2 ou 3 histórias dessa fase para personalizar o site."
+      ])
+    },
+    {
+      title: "Convite, convidados e site",
+      items: uniqueList([
+        "Reunir data, horário, local e cidade/região para o convite digital.",
+        "Montar uma lista inicial de convidados por família.",
+        modules.some(module => module.id === "rsvp") ? "Acompanhar confirmações pelo RSVP para evitar surpresa no buffet ou na comida." : "",
+        modules.some(module => module.id === "story") ? "Escrever um texto curto sobre o jeitinho da criança para a página especial." : "",
+        modules.some(module => module.id === "gallery") ? "Definir quem poderá aprovar fotos antes de aparecerem no site." : ""
+      ])
+    },
+    {
+      title: "Para resolver hoje",
+      items: helpChecklistItems(helpToday, modules, finalRecommendation)
+    },
+    {
+      title: "Com o local da festa",
+      items: venueChecklistItems(place)
+    },
+    {
+      title: "No dia da festa",
+      items: uniqueList([
+        "Ter uma pessoa responsável por acompanhar confirmações e recados.",
+        modules.some(module => module.id === "quiz") ? "Separar 5 perguntas simples para o quiz da criança." : "",
+        modules.some(module => module.id === "messages") ? "Lembrar convidados de deixarem recados carinhosos no mural." : "",
+        modules.some(module => module.id === "screen") ? "Testar o modo telão com antecedência no equipamento do local." : "",
+        "Reservar um momento curto para fotos da família antes do parabéns."
+      ])
+    }
+  ].map(section => ({ ...section, items: section.items.filter(Boolean).slice(0, 8) }));
+
+  return {
+    title: `Checklist da festa de ${answers.childName || "sua criança"}`,
+    subtitle: `Baseado no planejamento em ${cityRegion}, no momento "${stage}" e no conceito "${theme}".`,
+    sections
+  };
+}
+
+function stageChecklistItem(stage, theme) {
+  if (/zero/i.test(stage)) return "Começar definindo data, local, tamanho da festa e um conceito simples para guiar decisões.";
+  if (/buffet|espaço/i.test(stage)) return "Pedir ao buffet ou espaço regras de horário, entrada, telão, decoração e envio de informações aos convidados.";
+  if (/tema definido/i.test(stage)) return `Transformar o tema "${theme}" em convite, cores, mesa, lembrancinhas e uma brincadeira principal.`;
+  if (/detalhes/i.test(stage)) return "Revisar o que falta: convidados, RSVP, lembrancinhas, roteiro do parabéns e fotos.";
+  if (/ideias/i.test(stage)) return "Guardar 3 referências de tema e escolher a opção mais fácil de executar no seu local.";
+  return "Confirmar as decisões principais antes de avançar para compras e produção.";
+}
+
+function helpChecklistItems(helpToday, modules, recommendation) {
+  const text = helpToday || "";
+  const items = [];
+  if (/tema/i.test(text)) items.push(`Refinar o conceito "${recommendation.conceptName}" em cores, convite e decoração.`);
+  if (/festa inteira|organizar/i.test(text)) items.push("Criar um cronograma simples: convite, RSVP, fornecedores, compras, montagem e pós-festa.");
+  if (/convite|site/i.test(text)) items.push("Separar texto do convite, fotos, história da criança e informações do local.");
+  if (/lembrancinhas/i.test(text)) items.push("Escolher lembrancinha útil, fácil de comprar e alinhada ao tema.");
+  if (/decoração/i.test(text)) items.push("Priorizar poucos elementos fortes: mesa, painel, cores e cantinho de fotos.");
+  if (/bolo|doces/i.test(text)) items.push("Definir referência visual do bolo e quantidade de doces conforme convidados confirmados.");
+  if (/recreação|atrações/i.test(text)) items.push("Escolher uma brincadeira principal compatível com idade, espaço e horário.");
+  if (/checklist/i.test(text)) items.push("Usar este checklist como base e revisar semanalmente até a festa.");
+  modules.filter(module => module.tier !== "standard").slice(0, 4).forEach(module => items.push(`Planejar "${module.name}" com antecedência para caber no prazo.`));
+  return uniqueList(items.length ? items : recommendation.priorities || []);
+}
+
+function venueChecklistItems(place) {
+  if (["Casa", "Salão do condomínio", "Escola"].includes(place)) {
+    return [
+      "Confirmar regras de entrada, horário, som, limpeza e uso de áreas comuns.",
+      "Preparar orientação simples para chegada, portaria ou estacionamento.",
+      "Evitar atividades demais se o espaço for pequeno.",
+      "Definir onde ficarão bolo, fotos, presentes e crianças brincando."
+    ];
+  }
+  if (["Buffet infantil", "Restaurante", "Espaço de eventos"].includes(place)) {
+    return [
+      "Alinhar com o local horários de chegada, parabéns, fotos e encerramento.",
+      "Confirmar se pode usar telão, música, decoração extra e QR codes.",
+      "Verificar quantidade de crianças e adultos para dimensionar comida e equipe.",
+      "Combinar quem orienta convidados no dia da festa."
+    ];
+  }
+  return [
+    "Confirmar regras básicas do espaço antes de fechar convite e atrações.",
+    "Definir orientação de chegada para convidados.",
+    "Revisar infraestrutura: banheiro, energia, sombra/cobertura e som."
+  ];
+}
+
+function downloadChecklistPdf() {
+  const checklist = state.submissionResult?.checklist || generatePersonalizedChecklist();
+  const html = `
+    <!doctype html>
+    <html lang="pt-BR">
+    <head>
+      <meta charset="utf-8">
+      <title>${escapeHtml(checklist.title)}</title>
+      <style>
+        body { font-family: Arial, sans-serif; color: #241820; margin: 32px; line-height: 1.45; }
+        h1 { color: #b91868; margin-bottom: 6px; }
+        h2 { color: #241820; margin-top: 22px; border-bottom: 1px solid #ead8e3; padding-bottom: 6px; }
+        li { margin: 7px 0; }
+        .note { color: #735d6b; }
+        @page { margin: 18mm; }
+      </style>
+    </head>
+    <body>
+      <h1>${escapeHtml(checklist.title)}</h1>
+      <p class="note">${escapeHtml(checklist.subtitle)}</p>
+      ${checklist.sections.map(section => `
+        <h2>${escapeHtml(section.title)}</h2>
+        <ul>${section.items.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+      `).join("")}
+      <script>window.onload = () => window.print();</script>
+    </body>
+    </html>
+  `;
+  const printWindow = window.open("", "_blank", "width=900,height=700");
+  if (!printWindow) {
+    showToast("Não consegui abrir a janela de PDF. Permita pop-ups para baixar o checklist.");
+    return;
+  }
+  printWindow.document.write(html);
+  printWindow.document.close();
+}
+
 function selectedModuleDetails(ids = state.selectedModules) {
   const wanted = new Set(ids);
   return featureModules.filter(module => wanted.has(module.id));
@@ -1440,6 +1638,11 @@ function essentialModuleIds() {
 
 function uniqueList(items) {
   return [...new Set(items.filter(Boolean))];
+}
+
+function answerText(value) {
+  if (Array.isArray(value)) return value.filter(Boolean).join(", ");
+  return value || "";
 }
 
 function arrayOrText(value, fallback = []) {
@@ -1465,10 +1668,13 @@ function buildConfirmation(theme, personalization) {
     eventDate: state.answers.eventDate || "",
     eventTime: state.answers.eventTime || "",
     place: state.answers.place || "",
+    cityRegion: state.answers.cityRegion || "",
     size: state.answers.size || "",
+    planningStage: state.answers.planningStage || "",
     themeInterest: state.answers.themeInterest || state.answers.themeInterestMode || "",
-    style: state.answers.style || "",
-    mainHelp: state.answers.mainHelp || "",
+    style: state.selectedPath?.name || state.answers.style || "",
+    mainHelp: answerText(state.answers.agentHelpToday || state.answers.mainHelp),
+    agentHelpToday: answerText(state.answers.agentHelpToday),
     mustHave: Array.isArray(state.answers.mustHave) ? state.answers.mustHave.join(", ") : "",
     budget: state.answers.investmentLevel || "",
     investmentLevel: state.answers.investmentLevel || "",

@@ -92,6 +92,7 @@ async function submit(request, env) {
       subject: text(input.developmentBriefing?.subject, "", 220),
       body: longText(input.developmentBriefing?.body, "", 8000)
     },
+    checklist: normalizeChecklist(input.checklist),
     notes: text(input.notes, "", 1000),
     createdAt: Date.now()
   };
@@ -227,7 +228,7 @@ Tarefa:
 - Texto curto e util: whyFits e executionPlan em ate 420 caracteres; cada prioridade ou alerta em ate 90 caracteres.
 - Priorizar ideias possiveis de executar no Brasil.
 - Adaptar a idade e ao local.
-- Considerar horario, tamanho da festa, local, estilo e ajuda desejada.
+- Considerar horario, tamanho da festa, cidade/regiao, momento do planejamento e o que a familia quer resolver hoje.
 - Se o investimento for economico, evitar ideias caras.
 - Se for em escola, casa ou condominio, sugerir execucao simples.
 - Nao assumir genero.
@@ -360,6 +361,7 @@ function emailHtml(submission) {
   const refinementQuestions = Array.isArray(submission.refinementQuestions) ? submission.refinementQuestions : [];
   const finalRecommendation = submission.finalRecommendation || {};
   const giftGuide = submission.giftGuide || {};
+  const checklist = submission.checklist || {};
   const essential = (submission.featureModules || []).filter(module => module.tier === "standard");
   const mostChosen = (submission.featureModules || []).filter(module => module.tier === "recommended");
   const special = (submission.featureModules || []).filter(module => module.tier === "sophisticated");
@@ -385,6 +387,12 @@ function emailHtml(submission) {
     <p><b>Roupa:</b> ${escapeHtml(giftGuide.clothingSize || "Nao informado")} | <b>Calcado:</b> ${escapeHtml(giftGuide.shoeSize || "Nao informado")}</p>
     <p><b>Pode gostar:</b> ${escapeHtml(giftGuide.likes || "Nao informado")}</p>
     <p><b>Evitar:</b> ${escapeHtml(giftGuide.avoids || "Nao informado")}</p>
+    <h2>Checklist liberado para a familia</h2>
+    <p><b>${escapeHtml(checklist.title || "Checklist personalizado")}</b></p>
+    ${(checklist.sections || []).map(section => `
+      <h3>${escapeHtml(section.title)}</h3>
+      <ul>${(section.items || []).map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+    `).join("")}
     <h2>Briefing para avaliacao</h2><pre style="white-space:pre-wrap;background:#171018;color:#fff;padding:16px;border-radius:8px">${escapeHtml(developmentBriefing.body)}</pre>
     <h2>Resumo</h2><p>${escapeHtml(preview.productionSummary || preview.conceptSummary)}</p>
     <h2>Briefing</h2><pre style="white-space:pre-wrap;background:#fff4f8;padding:16px;border-radius:8px">${escapeHtml(JSON.stringify(brief, null, 2))}</pre>
@@ -408,6 +416,20 @@ function normalizeFeatureModules(modules) {
     tier: ["standard", "recommended", "sophisticated"].includes(module.tier) ? module.tier : "recommended",
     description: text(module.description, "", 260)
   })).filter(module => module.name);
+}
+
+function normalizeChecklist(checklist) {
+  if (!checklist || typeof checklist !== "object") return { title: "", subtitle: "", sections: [] };
+  return {
+    title: text(checklist.title, "", 160),
+    subtitle: text(checklist.subtitle, "", 300),
+    sections: Array.isArray(checklist.sections)
+      ? checklist.sections.slice(0, 8).map(section => ({
+        title: text(section.title, "", 120),
+        items: Array.isArray(section.items) ? section.items.slice(0, 12).map(item => text(item, "", 260)).filter(Boolean) : []
+      })).filter(section => section.title || section.items.length)
+      : []
+  };
 }
 
 function extractOutputText(payload) {
