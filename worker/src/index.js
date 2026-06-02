@@ -76,13 +76,10 @@ async function submit(request, env) {
     brief: input.brief || {},
     preview: input.preview || {},
     quizAnswers: input.quizAnswers || {},
-    refinementAnswers: {
-      energy: text(input.refinementAnswers?.energy, "", 120),
-      priority: text(input.refinementAnswers?.priority, "", 120),
-      detail: text(input.refinementAnswers?.detail, "", 800),
-      personalityStory: text(input.refinementAnswers?.personalityStory, "", 1000),
-      giftHints: text(input.refinementAnswers?.giftHints, "", 800)
-    },
+    selectedPath: input.selectedPath || {},
+    refinementQuestions: Array.isArray(input.refinementQuestions) ? input.refinementQuestions.slice(0, 3) : [],
+    refinementAnswers: input.refinementAnswers || {},
+    finalRecommendation: input.finalRecommendation || {},
     giftGuide: {
       clothingSize: text(input.giftGuide?.clothingSize, "", 80),
       shoeSize: text(input.giftGuide?.shoeSize, "", 80),
@@ -112,12 +109,15 @@ async function submit(request, env) {
 async function refine(request, env) {
   if (!env.OPENAI_API_KEY) throw error("OPENAI_API_KEY nao configurada.", 500);
   const input = await readJson(request);
-  const themes = await callOpenAIThemeRefine(env, {
+  const recommendation = await callOpenAIThemeRefine(env, {
     baseTheme: input.baseTheme || {},
+    selectedPath: input.selectedPath || {},
+    refinementQuestions: input.refinementQuestions || [],
+    refinementAnswers: input.refinementAnswers || {},
     userDescription: text(input.userDescription, "", 1200),
     quizAnswers: input.quizAnswers || {}
   });
-  return { ok: true, themes };
+  return { ok: true, recommendation };
 }
 
 async function callOpenAI(env, messages, currentBrief) {
@@ -187,7 +187,7 @@ async function callOpenAIThemeRefine(env, input) {
 
   const payload = await response.json();
   const parsed = JSON.parse(extractOutputText(payload));
-  return parsed.themes || [];
+  return parsed.recommendation || parsed.themes?.[0] || {};
 }
 
 function systemPrompt() {
@@ -220,17 +220,21 @@ function themeRefinePrompt() {
   return `Voce e um consultor de festas infantis no Brasil.
 
 Tarefa:
-- Gerar 1 recomendacao final de tema a partir do tema base, respostas do questionario e preferencia da familia.
+- Gerar 1 recomendacao final de festa a partir do caminho escolhido, respostas do questionario e respostas rapidas da familia.
 - Ser pratico, acolhedor e objetivo.
-- Cada campo deve ser curto. Conceito em ate 160 caracteres; demais campos em ate 110 caracteres.
+- A recomendacao deve ajudar os pais a tomar uma decisao possivel de executar, nao apenas escolher um tema bonito.
+- Usar nome da crianca quando informado, sem pedir nome completo.
+- Texto curto e util: whyFits e executionPlan em ate 420 caracteres; cada prioridade ou alerta em ate 90 caracteres.
 - Priorizar ideias possiveis de executar no Brasil.
 - Adaptar a idade e ao local.
-- Se o orcamento for baixo, evitar ideias caras.
+- Considerar horario, tamanho da festa, local, estilo e ajuda desejada.
+- Se o investimento for economico, evitar ideias caras.
 - Se for em escola, casa ou condominio, sugerir execucao simples.
 - Nao assumir genero.
 - Nao pedir nome completo nem dados sensiveis.
 - Evitar depender de personagem licenciado; quando necessario, sugerir uma direcao inspirada, nao oficial.
 - Nao sugerir ideias mirabolantes.
+- Retornar uma unica recomendacao final com conceito, execucao, prioridades e alertas praticos.
 
 Responda somente no JSON do schema.`;
 }
@@ -296,27 +300,25 @@ function themeRefineSchema() {
   return {
     type: "object",
     additionalProperties: false,
-    required: ["themes"],
+    required: ["recommendation"],
     properties: {
-      themes: {
-        type: "array",
-        minItems: 1,
-        maxItems: 1,
-        items: {
-          type: "object",
-          additionalProperties: false,
-          required: ["name", "concept", "palette", "decorIdea", "guestInteraction", "partyFavor", "costLevel", "difficultyLevel", "viabilityNote"],
-          properties: {
-            name: { type: "string" },
-            concept: { type: "string" },
-            palette: { type: "array", items: { type: "string" }, maxItems: 5 },
-            decorIdea: { type: "string" },
-            guestInteraction: { type: "string" },
-            partyFavor: { type: "string" },
-            costLevel: { type: "string" },
-            difficultyLevel: { type: "string" },
-            viabilityNote: { type: "string" }
-          }
+      recommendation: {
+        type: "object",
+        additionalProperties: false,
+        required: ["conceptName", "whyFits", "executionPlan", "priorities", "avoid", "palette", "decorIdea", "guestInteraction", "partyFavor", "costLevel", "difficultyLevel", "viabilityNote"],
+        properties: {
+          conceptName: { type: "string" },
+          whyFits: { type: "string" },
+          executionPlan: { type: "string" },
+          priorities: { type: "array", items: { type: "string" }, minItems: 3, maxItems: 5 },
+          avoid: { type: "array", items: { type: "string" }, minItems: 1, maxItems: 2 },
+          palette: { type: "array", items: { type: "string" }, maxItems: 5 },
+          decorIdea: { type: "string" },
+          guestInteraction: { type: "string" },
+          partyFavor: { type: "string" },
+          costLevel: { type: "string" },
+          difficultyLevel: { type: "string" },
+          viabilityNote: { type: "string" }
         }
       }
     }
@@ -355,6 +357,8 @@ function emailHtml(submission) {
   const preview = submission.preview || {};
   const developmentBriefing = submission.developmentBriefing || {};
   const refinement = submission.refinementAnswers || {};
+  const refinementQuestions = Array.isArray(submission.refinementQuestions) ? submission.refinementQuestions : [];
+  const finalRecommendation = submission.finalRecommendation || {};
   const giftGuide = submission.giftGuide || {};
   const essential = (submission.featureModules || []).filter(module => module.tier === "standard");
   const mostChosen = (submission.featureModules || []).filter(module => module.tier === "recommended");
@@ -368,13 +372,18 @@ function emailHtml(submission) {
     <p><b>Essencial:</b> ${escapeHtml(essential.map(module => module.name).join(", ") || "Nenhum")}</p>
     <p><b>Mais escolhido:</b> ${escapeHtml(mostChosen.map(module => module.name).join(", ") || "Nenhum")}</p>
     <p><b>Experiencias especiais:</b> ${escapeHtml(special.map(module => module.name).join(", ") || "Nenhuma")}</p>
-    <h2>Detalhes afetivos</h2>
-    <p><b>Dinamica:</b> ${escapeHtml(refinement.energy || "Nao informado")}</p>
-    <p><b>Prioridade:</b> ${escapeHtml(refinement.priority || "Nao informado")}</p>
-    <p><b>Historia/jeitinho:</b> ${escapeHtml(refinement.personalityStory || "Nao informado")}</p>
+    <h2>Caminho e recomendacao final</h2>
+    <p><b>Caminho escolhido:</b> ${escapeHtml(submission.selectedPath?.name || brief.selectedPathName || "Nao informado")}</p>
+    <p><b>Conceito:</b> ${escapeHtml(finalRecommendation.conceptName || brief.themeName || "Nao informado")}</p>
+    <p><b>Por que combina:</b> ${escapeHtml(finalRecommendation.whyFits || "Nao informado")}</p>
+    <p><b>Como executar:</b> ${escapeHtml(finalRecommendation.executionPlan || "Nao informado")}</p>
+    <p><b>Priorizar:</b> ${escapeHtml((finalRecommendation.priorities || []).join(", ") || "Nao informado")}</p>
+    <p><b>Evitar:</b> ${escapeHtml((finalRecommendation.avoid || []).join(", ") || "Nao informado")}</p>
+    <h2>Perguntas rapidas da IA</h2>
+    ${refinementQuestions.length ? refinementQuestions.map(question => `<p><b>${escapeHtml(question.prompt)}:</b> ${escapeHtml(refinement[question.id] || "Nao informado")}</p>`).join("") : "<p>Nenhuma pergunta adicional registrada.</p>"}
     <h2>Guia de presentes</h2>
     <p><b>Roupa:</b> ${escapeHtml(giftGuide.clothingSize || "Nao informado")} | <b>Calcado:</b> ${escapeHtml(giftGuide.shoeSize || "Nao informado")}</p>
-    <p><b>Pode gostar:</b> ${escapeHtml(giftGuide.likes || refinement.giftHints || "Nao informado")}</p>
+    <p><b>Pode gostar:</b> ${escapeHtml(giftGuide.likes || "Nao informado")}</p>
     <p><b>Evitar:</b> ${escapeHtml(giftGuide.avoids || "Nao informado")}</p>
     <h2>Briefing para avaliacao</h2><pre style="white-space:pre-wrap;background:#171018;color:#fff;padding:16px;border-radius:8px">${escapeHtml(developmentBriefing.body)}</pre>
     <h2>Resumo</h2><p>${escapeHtml(preview.productionSummary || preview.conceptSummary)}</p>
