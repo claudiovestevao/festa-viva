@@ -1,6 +1,6 @@
 # Festa Viva Concierge
 
-Assistente mobile-first para pais e maes escolherem ou refinarem o tema da festa infantil e enviarem um briefing estruturado para avaliacao do time de desenvolvimento.
+Assistente mobile-first para pais e maes planejarem uma festa especial com praticidade, escolherem ou refinarem o tema e enviarem os dados confirmados para criacao ou avaliacao do time.
 
 Fluxo:
 
@@ -9,9 +9,9 @@ Fluxo:
 3. Geracao de 3 sugestoes de tema com custo e dificuldade estimados.
 4. Refinamento com IA opcional, com perguntas rapidas, pistas afetivas e uma recomendacao final.
 5. Confirmacao editavel do tema final.
-6. Montagem da experiencia da festa: Essencial, Mais escolhido e Experiencias especiais, incluindo ideias de presentes quando fizer sentido.
+6. Escolha de pacote: Plano Essencial, Plano Mais Escolhido ou Plano Experiencias Especiais.
 7. Previa conceitual editavel: conceito, visual, secoes, interacoes, atividades e pontos de atencao.
-8. Briefing para avaliacao com detalhes da crianca, guia de presentes, copia, edicao e envio por email.
+8. Confirmacao dos dados para ajustes finais com detalhes da crianca, guia de presentes, copia, edicao e envio por email.
 
 ## Rotas
 

@@ -11,8 +11,9 @@ const questions = [
   {
     id: "planningStage",
     prompt: "Em que momento você está no planejamento da festa?",
-    type: "single",
-    options: ["Estou começando do zero.", "Já tenho buffet ou espaço contratado.", "Já tenho tema definido.", "Só preciso resolver alguns detalhes.", "Estou apenas buscando ideias."]
+    type: "multi",
+    max: 4,
+    options: ["Estou começando do zero", "Já tenho buffet ou espaço contratado", "Já tenho tema definido", "Já tenho data definida", "Já tenho lista de convidados", "Só preciso resolver alguns detalhes", "Estou buscando ideias", "Quero organizar melhor o que já tenho"]
   },
   {
     id: "age",
@@ -78,7 +79,7 @@ const featureModules = [
   { id: "gallery", name: "Fotos com aprovação", tier: "recommended", description: "Os pais escolhem quais fotos entram na retrospectiva ou página da festa.", section: "Fotos com aprovação", interaction: "Envio de fotos com aprovação dos pais" },
   { id: "messages", name: "Mural de recados", tier: "recommended", description: "Mensagens carinhosas dos convidados para guardar como lembrança.", section: "Mural de recados", interaction: "Recados afetivos para a família" },
   { id: "menu", name: "Cardápio", tier: "recommended", description: "Cardápio infantil, buffet ou opções da festa em uma página fácil de consultar.", section: "Cardápio", interaction: "Consulta rápida do cardápio" },
-  { id: "album", name: "Álbum de memórias", tier: "recommended", description: "Uma página para reunir os melhores registros depois da comemoração.", section: "Álbum de memórias", interaction: "Agradecimento e melhores registros pós-festa" },
+  { id: "album", name: "Álbum de memórias compartilhadas", tier: "sophisticated", description: "Convidados com acesso ao site podem enviar fotos com o aniversariante. As imagens passam por aprovação dos pais/responsáveis antes de serem publicadas.", section: "Álbum de memórias compartilhadas", interaction: "Fotos enviadas por convidados com aprovação dos pais" },
   { id: "giftGuide", name: "Ideias de presentes", tier: "recommended", description: "Sugestões por idade, tamanho, preferências e fase da criança.", section: "Ideias de presentes", interaction: "Convidados consultam sugestões antes de comprar presente" },
   { id: "quiz", name: "Quiz da criança", tier: "sophisticated", description: "Perguntas rápidas e divertidas para os convidados brincarem durante a festa.", section: "Quiz da criança", interaction: "Brincadeira rápida para convidados" },
   { id: "missions", name: "Missões da festa", tier: "sophisticated", description: "Desafios simples para aproximar convidados e criar fotos e memórias.", section: "Missões da festa", interaction: "Missões leves para criar memórias" },
@@ -87,6 +88,44 @@ const featureModules = [
   { id: "partyFavors", name: "Lembrancinhas personalizadas", tier: "sophisticated", description: "Ideias de lembrancinhas criativas, úteis e alinhadas ao tema da festa.", section: "Lembrancinhas personalizadas", interaction: "Sugestões de lembrancinhas para convidados" },
   { id: "messaging", name: "Lembretes para convidados", tier: "sophisticated", description: "Envio de lembretes e informações importantes por canais oficiais.", section: "Lembretes para convidados", interaction: "Lembretes por canais oficiais" },
   { id: "timeline", name: "Linha do tempo da criança", tier: "sophisticated", description: "Momentos marcantes da criança organizados de forma visual e afetiva.", section: "Linha do tempo da criança", interaction: "Linha do tempo afetiva" }
+];
+
+const packagePlans = [
+  {
+    id: "essential",
+    name: "Plano Essencial",
+    price: "R$ 24,90",
+    badge: "Para começar bem",
+    description: "Para quem quer convite, informações principais, RSVP e um checklist prático para organizar a festa sem se perder.",
+    includes: ["Convite digital", "Informações principais da festa", "Lista de convidados + RSVP", "Ideias de presente", "Checklist de planejamento da festa"],
+    moduleIds: ["invite", "rsvp", "giftGuide"],
+    payment: "Faça o PIX para cvitorestevao@gmail.com no valor de R$ 24,90. Após a confirmação, o site/convite fica pronto em até 48 horas.",
+    nextSteps: "Após a confirmação, o site/convite fica pronto em até 48 horas."
+  },
+  {
+    id: "chosen",
+    name: "Plano Mais Escolhido",
+    price: "R$ 89,90",
+    badge: "Mais escolhido",
+    description: "Para famílias que querem um site da festa mais completo, com experiências digitais adicionais e mais cuidado com as memórias.",
+    includes: ["Tudo do Plano Essencial", "Site da festa mais completo", "Experiências digitais adicionais definidas no pacote", "Disponibilidade do site por até 3 meses após a contratação", "URL encurtada personalizada, no estilo bit.ly", "Até 2 ciclos de revisões"],
+    moduleIds: ["invite", "rsvp", "giftGuide", "story", "gallery", "messages", "menu"],
+    note: "Consulte condições especiais acima de 10 mini-apps.",
+    payment: "Faça o PIX para cvitorestevao@gmail.com no valor de R$ 89,90. Após a confirmação, o site fica pronto em até 48 horas e podem ser feitos até 2 ciclos de revisões.",
+    nextSteps: "Após a confirmação, o site fica pronto em até 48 horas e podem ser feitos até 2 ciclos de revisões."
+  },
+  {
+    id: "special",
+    name: "Plano Experiências Especiais",
+    price: "Orçamento personalizado",
+    badge: "Sob medida",
+    description: "Para criar uma experiência personalizada da festa, combinando recursos especiais com a equipe.",
+    includes: ["Site personalizado da festa", "Experiências especiais combinadas com a equipe", "Álbum de memórias compartilhadas com aprovação dos pais/responsáveis", "Site disponível por até 3 meses após a contratação", "Nome do site personalizado, a combinar com a equipe de desenvolvimento", "URL encurtada personalizada, no estilo bit.ly"],
+    moduleIds: ["invite", "rsvp", "giftGuide", "story", "gallery", "messages", "quiz", "missions", "retrospective", "partyFlow", "partyFavors", "messaging", "timeline", "album"],
+    note: "Consulte condições especiais acima de 10 mini-apps.",
+    payment: "Perfeito! Para experiências especiais, nossa equipe irá avaliar sua ideia e retornar com um orçamento personalizado em até 48 horas. Nesse plano, você também poderá combinar com a equipe o nome personalizado do site da festa.",
+    nextSteps: "A equipe avalia o pedido e retorna com orçamento personalizado em até 48 horas."
+  }
 ];
 
 const initialState = {
@@ -105,6 +144,7 @@ const initialState = {
   briefing: null,
   briefingEditable: false,
   selectedModules: [],
+  selectedPlan: null,
   giftGuide: { clothingSize: "", shoeSize: "", likes: "", avoids: "", notes: "" },
   contact: { name: "", email: "", phone: "", buffetCode: "" },
   submissionResult: null,
@@ -345,11 +385,11 @@ function PathRefinementChoiceStep() {
         <p class="micro">${escapeHtml(theme.whyFits || "Um caminho possível para sua família avançar com mais clareza.")}</p>
       </aside>
       <section class="question-card">
-        <h2>Quer deixar com o jeitinho da sua família?</h2>
-        <p class="lead">A IA pode fazer 2 ou 3 perguntas rápidas e trazer dicas personalizadas para deixar a festa ainda mais surpreendente, prática e possível de executar.</p>
+        <h2>Quer deixar essa ideia ainda mais com a cara da sua família?</h2>
+        <p class="lead">A IA pode refinar o tema escolhido com base na idade da criança, estilo da família, tipo de festa, investimento aproximado e experiências desejadas. Assim, a festa fica mais personalizada, surpreendente e especial para os convidados.</p>
         <div class="cta-row">
-          <button class="button primary" data-action="start-path-refine">Sim, refinar com IA</button>
-          <button class="button secondary" data-action="skip-path-refine">Seguir com este caminho</button>
+          <button class="button primary" data-action="start-path-refine">Sim, quero refinar com a IA</button>
+          <button class="button secondary" data-action="skip-path-refine">Não, quero seguir com esse caminho</button>
           <button class="button ghost" data-action="back-to-suggestions">Escolher outro caminho</button>
         </div>
       </section>
@@ -461,44 +501,58 @@ function FinalRecommendationStep() {
 }
 
 function FeatureSelectionStep() {
-  const standard = featureModules.filter(module => module.tier === "standard");
-  const recommendedItems = featureModules.filter(module => module.tier === "recommended");
-  const sophisticated = featureModules.filter(module => module.tier === "sophisticated");
+  const selectedPlan = currentPlan();
   return StepShell(`
     <div class="section-title">
-      <h2>Monte a experiência da festa</h2>
-      <p class="lead">Escolha o que faz sentido para a festa da sua família. Alguns itens já vêm incluídos para facilitar o planejamento, e outros podem deixar a comemoração mais divertida, memorável ou especial.</p>
+      <h2>Escolha o pacote da festa</h2>
+      <p class="lead">Escolha o plano que combina com o momento da sua família. Cada opção mostra preço, entregáveis e próximos passos de forma transparente.</p>
     </div>
-    <div class="module-columns three">
-      <section class="module-section">
-        <h3>Essencial</h3>
-        <p class="micro">Já vem incluído para sua festa começar organizada.</p>
-        <div class="module-grid">
-          ${standard.map(module => FeatureModuleCard(module)).join("")}
-        </div>
-      </section>
-      <section class="module-section">
-        <h3>Mais escolhido</h3>
-        <p class="micro">Itens que costumam deixar a festa mais divertida e completa.</p>
-        <div class="module-grid">
-          ${recommendedItems.map(module => FeatureModuleCard(module)).join("")}
-        </div>
-      </section>
-      <section class="module-section">
-        <h3>Experiências especiais</h3>
-        <p class="micro">Ideias para transformar a festa em uma lembrança ainda mais marcante.</p>
-        <div class="module-grid">
-          ${sophisticated.map(module => FeatureModuleCard(module)).join("")}
-        </div>
-      </section>
+    <div class="package-grid">
+      ${packagePlans.map(plan => PackagePlanCard(plan)).join("")}
     </div>
+    ${selectedPlan ? PackageNextSteps(selectedPlan) : ""}
     ${state.selectedModules.includes("giftGuide") ? GiftGuidePanel() : ""}
-    <p class="micro final-note">Você poderá ajustar tudo na próxima etapa antes de enviar para criação da festa personalizada.</p>
+    <p class="micro final-note">Você poderá revisar seus dados na próxima etapa antes de enviar as informações finais.</p>
     <div class="cta-row">
-      <button class="button primary" data-action="continue-to-preview" ${state.selectedModules.length ? "" : "disabled"}>Gerar prévia</button>
+      <button class="button primary" data-action="continue-to-preview" ${selectedPlan ? "" : "disabled"}>Continuar para revisão</button>
       <button class="button secondary" data-action="back-to-confirm">Voltar ao tema</button>
     </div>
-  `, "Experiência", 100);
+  `, "Pacote", 100);
+}
+
+function PackagePlanCard(plan) {
+  const active = state.selectedPlan === plan.id;
+  return `
+    <article class="package-card ${active ? "active" : ""}">
+      <span class="module-badge ${plan.id === "essential" ? "standard" : plan.id === "chosen" ? "recommended" : "sophisticated"}">${escapeHtml(plan.badge)}</span>
+      <h3>${escapeHtml(plan.name)}</h3>
+      <strong class="package-price">${escapeHtml(plan.price)}</strong>
+      <p>${escapeHtml(plan.description)}</p>
+      <ul class="mini-list package-list">
+        ${plan.includes.map(item => `<li>${escapeHtml(item)}</li>`).join("")}
+      </ul>
+      ${plan.note ? `<p class="micro package-note">${escapeHtml(plan.note)}</p>` : ""}
+      <button class="button ${active ? "primary" : "secondary"} full" data-action="choose-plan" data-plan="${escapeAttr(plan.id)}">${active ? "Plano selecionado" : "Escolher este plano"}</button>
+    </article>
+  `;
+}
+
+function PackageNextSteps(plan) {
+  const isSpecial = plan.id === "special";
+  return `
+    <section class="package-next ${isSpecial ? "special" : ""}">
+      <h3>${isSpecial ? "Próximo passo: orçamento personalizado" : "Próximo passo: pagamento via PIX"}</h3>
+      <p>${escapeHtml(plan.payment)}</p>
+      ${plan.note ? `<p class="micro package-note"><strong>${escapeHtml(plan.note)}</strong></p>` : ""}
+      ${isSpecial ? "" : `
+        <div class="pix-box">
+          <span>PIX</span>
+          <strong>cvitorestevao@gmail.com</strong>
+          <small>Valor: ${escapeHtml(plan.price)}</small>
+        </div>
+      `}
+    </section>
+  `;
 }
 
 function GiftGuidePanel() {
@@ -620,8 +674,8 @@ function DevelopmentBriefingPreview() {
   const disabled = state.briefingEditable ? "" : "disabled";
   return StepShell(`
     <div class="section-title">
-      <h2>Briefing para avaliação</h2>
-      <p class="lead">Este briefing será enviado para o time avaliar viabilidade, prazo e complexidade. O envio não garante criação automática.</p>
+      <h2>Confirmação dos dados para ajustes finais</h2>
+      <p class="lead">Confirme seus dados para os ajustes finais. Usaremos seu e-mail para enviar o retorno da equipe, confirmar informações e, quando aplicável, orientar sobre o pagamento e próximos passos.</p>
     </div>
     <section class="panel">
       <label class="micro"><strong>Assunto</strong></label>
@@ -629,28 +683,28 @@ function DevelopmentBriefingPreview() {
       <div style="height:10px"></div>
       <textarea class="briefing-box" data-bind="briefing.body" ${disabled}>${escapeHtml(briefing.body)}</textarea>
       <div class="cta-row">
-        <button class="button secondary" data-action="copy-briefing">Copiar briefing</button>
-        <button class="button secondary" data-action="toggle-edit">${state.briefingEditable ? "Concluir edição" : "Editar briefing"}</button>
+        <button class="button secondary" data-action="copy-briefing">Copiar resumo</button>
+        <button class="button secondary" data-action="toggle-edit">${state.briefingEditable ? "Concluir edição" : "Editar informações"}</button>
         <button class="button ghost" data-action="back-to-preview">Voltar e ajustar tema</button>
       </div>
     </section>
     ${EmailReviewStep()}
-  `, "Briefing", 100);
+  `, "Confirmação", 100);
 }
 
 function EmailReviewStep() {
   return `
     <section class="panel" style="margin-top:12px">
-      <h2>Enviar por e-mail</h2>
-      <p class="micro">O time recebe o pedido em contato@claudiocode.dev para avaliar a próxima etapa.</p>
+      <h2>Dados do responsável</h2>
+      <p class="micro">Informe o e-mail de quem deve receber o retorno da equipe, orientações de pagamento e próximos passos.</p>
       <div class="form-grid two">
         ${inputField("Nome do responsável", "contact.name", state.contact.name)}
-        ${inputField("E-mail para retorno", "contact.email", state.contact.email)}
+        ${inputField("E-mail do responsável", "contact.email", state.contact.email)}
         ${inputField("WhatsApp", "contact.phone", state.contact.phone)}
         ${inputField("Buffet ou código do buffet", "contact.buffetCode", state.contact.buffetCode)}
       </div>
       <div class="cta-row">
-        <button class="button primary" data-action="send-email" ${state.loading === "submit" ? "disabled" : ""}>Enviar por e-mail</button>
+        <button class="button primary" data-action="send-email" ${state.loading === "submit" ? "disabled" : ""}>Enviar para criação</button>
         ${state.loading === "submit" ? `<span class="loading">Enviando...</span>` : ""}
       </div>
     </section>
@@ -659,11 +713,14 @@ function EmailReviewStep() {
 
 function SubmissionSuccessPage() {
   const checklist = state.submissionResult?.checklist || generatePersonalizedChecklist();
+  const plan = currentPlan();
+  const successCopy = successCopyForPlan(plan);
   return StepShell(`
     <section class="success-hero">
       <span class="route-eyebrow">Pedido recebido</span>
-      <h2>Obrigado por preencher tudo com carinho.</h2>
-      <p class="lead">Recebemos as informações da festa e retornaremos em até 48 horas com a avaliação da experiência personalizada.</p>
+      <h2>Obrigado! Recebemos suas informações.</h2>
+      <p class="lead">${escapeHtml(successCopy.lead)}</p>
+      <p class="micro">${escapeHtml(successCopy.detail)}</p>
       <p class="micro">Enquanto isso, preparei um checklist com base nas suas respostas para ajudar sua família a seguir sem perder o fio.</p>
       ${state.submissionResult?.id ? `<p class="micro"><strong>ID do pedido:</strong> ${escapeHtml(state.submissionResult.id)}</p>` : ""}
     </section>
@@ -679,6 +736,22 @@ function SubmissionSuccessPage() {
       </div>
     </section>
   `, "Checklist", 100);
+}
+
+function successCopyForPlan(plan = currentPlan()) {
+  if (plan?.id === "special") {
+    return {
+      lead: "Como você escolheu uma experiência personalizada, nossa equipe irá avaliar o pedido e retornar com um orçamento em até 48 horas.",
+      detail: "Nesse plano, também será possível combinar o nome personalizado do site com a equipe de desenvolvimento."
+    };
+  }
+  const selected = plan || packagePlans.find(item => item.id === "chosen");
+  return {
+    lead: `Para iniciar a produção, faça o PIX no valor de ${selected.price} para cvitorestevao@gmail.com.`,
+    detail: selected.id === "essential"
+      ? "Após a confirmação, seu site/convite ficará pronto em até 48 horas."
+      : "Após a confirmação, seu site ficará pronto em até 48 horas e podem ser feitos até 2 ciclos de revisões."
+  };
 }
 
 function ChecklistView(checklist) {
@@ -795,6 +868,7 @@ function handleClick(event) {
   if (action === "refine-current") return startRefinement(state.selectedPath || state.selectedTheme || currentConfirmation());
   if (action === "confirm-theme") return confirmTheme();
   if (action === "back-to-confirm") return setState({ screen: "confirm" });
+  if (action === "choose-plan") return choosePlan(target.dataset.plan);
   if (action === "toggle-module") return toggleModule(target.dataset.module);
   if (action === "select-recommended-modules") return selectRecommendedModules();
   if (action === "continue-to-preview") return continueToPreview();
@@ -981,13 +1055,26 @@ async function refineWithAI() {
 function confirmTheme() {
   const finalRecommendation = state.finalRecommendation || generateFinalRecommendation(state.selectedTheme, state.answers, state.refinementAnswers, refinementQuestions());
   const confirmation = { ...buildConfirmation(state.selectedTheme || {}, finalRecommendation), ...state.confirmation };
-  const selectedModules = state.selectedModules.length ? state.selectedModules : recommendedModuleIds(confirmation, state.answers);
+  const selectedPlan = state.selectedPlan || "chosen";
+  const selectedModules = packageModuleIds(selectedPlan);
   setState({
     screen: "features",
     finalRecommendation,
     aiPersonalization: finalRecommendation,
     confirmation,
+    selectedPlan,
     selectedModules,
+    preview: null,
+    briefing: null
+  });
+}
+
+function choosePlan(planId) {
+  const plan = packagePlans.find(item => item.id === planId);
+  if (!plan) return;
+  setState({
+    selectedPlan: plan.id,
+    selectedModules: packageModuleIds(plan.id),
     preview: null,
     briefing: null
   });
@@ -1029,7 +1116,7 @@ async function copyBriefing() {
   const text = `${briefing.subject}\n\n${briefing.body}`;
   try {
     await navigator.clipboard.writeText(text);
-    showToast("Briefing copiado.");
+    showToast("Resumo copiado.");
   } catch {
     showToast("Não consegui copiar automaticamente. O texto está pronto para seleção manual.");
   }
@@ -1056,6 +1143,7 @@ async function sendEmail() {
       refinementAnswers: state.refinementAnswers,
       finalRecommendation: state.finalRecommendation,
       giftGuide: state.giftGuide,
+      selectedPlan: currentPlan(),
       featureModules: selectedModuleDetails(),
       developmentBriefing: briefing,
       checklist
@@ -1090,29 +1178,111 @@ async function api(path, body, options = {}) {
 }
 
 function generateThemeRecommendations(answers) {
-  return [
-    {
-      name: "Festa prática e charmosa",
-      path: "practical",
-      whyFits: "Para quem quer uma comemoração bonita, simples de organizar e sem exageros.",
-      cost: "Equilibrado",
-      difficulty: "Baixa"
-    },
-    {
-      name: "Festa divertida para as crianças",
-      path: "fun",
-      whyFits: "Para quem quer brincadeiras, energia, interação e participação dos convidados.",
-      cost: "Médio",
-      difficulty: "Média"
-    },
-    {
-      name: "Festa memorável e personalizada",
-      path: "emotional",
-      whyFits: "Para quem quer emoção, história da criança, fotos, retrospectiva e detalhes afetivos.",
-      cost: "Médio a alto",
-      difficulty: "Média"
-    }
-  ];
+  const text = [
+    answers.themeInterest,
+    answers.themeInterestMode,
+    answers.age,
+    answers.place,
+    answers.size,
+    answers.style,
+    answerText(answers.agentHelpToday),
+    answerText(answers.mustHave),
+    answerText(answers.planningStage)
+  ].join(" ").toLowerCase();
+  const wantsHelp = /ajuda da ia|ainda não sei|ideias|escolher/i.test(text);
+  const isFootball = /futebol|bola|são paulo|sao paulo|tricolor|palmeiras|corinthians|santos|flamengo|time/i.test(text);
+  const isDino = /dinossauro|dino/i.test(text);
+  const isPrincess = /princesa|princesas|castelo|fantasia/i.test(text);
+  const isDisney = /minnie|mickey|disney|bluey|personagem|desenho/i.test(text);
+  const isNature = /animal|animais|natureza|fazendinha|jardim|ar livre/i.test(text);
+  const isHero = /herói|herois|heróis|super/i.test(text);
+  const isCreative = /criativo|diferente|memorável|personalizada|emocionante/i.test(text);
+  const isPractical = /organizar|checklist|tempo|dinheiro|simples|econômico|detalhes/i.test(text);
+  const pool = [];
+  const add = (item) => {
+    if (!pool.some(existing => existing.name === item.name)) pool.push(item);
+  };
+
+  if (isFootball) add({
+    name: "Festa Futebol do Aniversariante",
+    path: "fun",
+    whyFits: "Uma festa com clima de mini estádio, convite em formato de ingresso, brincadeira de chute ao gol e muita energia para crianças que amam bola.",
+    cost: "Equilibrado",
+    difficulty: "Média"
+  });
+  if (isDino) add({
+    name: "Dinossauros Divertidos",
+    path: "fun",
+    whyFits: "Um caminho colorido, fácil de reconhecer e ótimo para brincadeiras, caça aos ovos, pegadas no chão e fotos com muita imaginação.",
+    cost: "Médio",
+    difficulty: "Baixa a média"
+  });
+  if (isPrincess) add({
+    name: "Princesas Modernas",
+    path: "emotional",
+    whyFits: "Uma direção delicada, afetiva e sem exagero, com cores suaves, convite encantador e detalhes que valorizam a criança sem ficar engessado.",
+    cost: "Médio",
+    difficulty: "Média"
+  });
+  if (isDisney) add({
+    name: "Disney Mágica",
+    path: "emotional",
+    whyFits: "Uma festa alegre e fotogênica, com personagem como inspiração, paleta forte, convite marcante e espaço para memórias da família.",
+    cost: "Médio a alto",
+    difficulty: "Média"
+  });
+  if (isNature) add({
+    name: "Jardim Encantado",
+    path: "emotional",
+    whyFits: "Uma festa delicada, lúdica e cheia de detalhes afetivos, ideal para famílias que querem uma experiência doce, fotogênica e acolhedora.",
+    cost: "Equilibrado",
+    difficulty: "Baixa a média"
+  });
+  if (isHero) add({
+    name: "Super-Heróis em Missão",
+    path: "fun",
+    whyFits: "Uma festa com energia, pequenas missões, medalhas e participação dos convidados, boa para crianças que gostam de ação e brincadeira.",
+    cost: "Médio",
+    difficulty: "Média"
+  });
+  if (isCreative || wantsHelp) add({
+    name: "Arco-Íris Criativo",
+    path: "practical",
+    whyFits: "Um caminho alegre, flexível e fácil de adaptar quando a família ainda está buscando ideias ou quer uma festa bonita sem depender de um personagem.",
+    cost: "Equilibrado",
+    difficulty: "Baixa"
+  });
+  if (isPractical) add({
+    name: "Festa Prática e Charmosa",
+    path: "practical",
+    whyFits: "Uma comemoração bonita, organizada e sem exageros, pensada para reduzir retrabalho, centralizar informações e facilitar confirmações.",
+    cost: "Baixo a médio",
+    difficulty: "Baixa"
+  });
+
+  add({
+    name: "Fazendinha Afetiva",
+    path: "emotional",
+    whyFits: "Um tema acolhedor, possível de executar no Brasil e ótimo para crianças pequenas, com decoração simples, fotos bonitas e clima familiar.",
+    cost: "Equilibrado",
+    difficulty: "Baixa"
+  });
+  add({
+    name: "Festa Divertida dos Amigos",
+    path: "fun",
+    whyFits: "Uma direção focada em brincadeiras, participação dos convidados, RSVP organizado e momentos leves para o dia da festa.",
+    cost: "Médio",
+    difficulty: "Média"
+  });
+  add({
+    name: "Memórias do Aniversariante",
+    path: "emotional",
+    whyFits: "Uma proposta com história da criança, fotos, mensagens e detalhes afetivos para transformar a festa em lembrança da família.",
+    cost: "Médio",
+    difficulty: "Média"
+  });
+
+  return pool.slice(0, 5);
 }
 
 function refinementQuestions() {
@@ -1125,7 +1295,7 @@ function selectRefinementQuestions(answers = {}, selectedPath = {}) {
   const themeMode = answers.themeInterestMode || "";
   const themeText = String(answers.themeInterest || "").trim();
   const place = answers.place || "";
-  const planningStage = answers.planningStage || "";
+  const planningStage = answerText(answers.planningStage) || "";
   const helpToday = answerText(answers.agentHelpToday || answers.mainHelp);
   const style = selectedPath.name || selectedPath.whyFits || "";
   const investment = answers.investmentLevel || "";
@@ -1144,6 +1314,21 @@ function selectRefinementQuestions(answers = {}, selectedPath = {}) {
       id: "partyVibe",
       prompt: "A festa deve ter mais cara de quê?",
       options: ["Fofa e delicada", "Colorida e divertida", "Esportiva e animada", "Elegante e organizada", "Afetiva e familiar", "Surpreendente"]
+    },
+    colorMood: {
+      id: "colorMood",
+      prompt: "Tem alguma direção de cores que combina mais?",
+      options: ["Cores suaves", "Bem colorida", "Cores do tema/personagem", "Mais elegante", "Quero sugestão da IA"]
+    },
+    personalizationLevel: {
+      id: "personalizationLevel",
+      prompt: "Qual nível de personalização você quer?",
+      options: ["Prático e pronto", "Com alguns detalhes da criança", "Bem personalizado com história e memórias", "Quero equilibrar beleza e praticidade"]
+    },
+    avoidTheme: {
+      id: "avoidTheme",
+      prompt: "Tem algo que a família quer evitar nessa ideia?",
+      options: ["Ficar caro demais", "Tema difícil de decorar", "Personagem muito marcado", "Excesso de atividades", "Nada específico"]
     },
     avoidOrg: {
       id: "avoidOrg",
@@ -1224,16 +1409,16 @@ function selectRefinementQuestions(answers = {}, selectedPath = {}) {
   const venueLike = ["Buffet infantil", "Restaurante", "Espaço de eventos"].includes(place);
 
   if (needsThemeHelp) add("likesToday", "themeDirection", "partyVibe");
-  if (/tema definido/i.test(planningStage)) add("partyVibe", "venueComplement", "focusFunMemory");
+  if (/tema definido/i.test(planningStage)) add("partyVibe", "colorMood", "avoidTheme");
   if (/buscando ideias/i.test(planningStage)) add("likesToday", "themeDirection", "partyVibe");
   if (/detalhes/i.test(planningStage)) add("avoidOrg", "venueComplement", "helpLevel");
   if (practical) add("avoidOrg", "helpLevel", "scope");
-  if (emotional) add("memoryGoal", "childPersonality", "familyMoment");
+  if (emotional) add("memoryGoal", "childPersonality", "personalizationLevel");
   if (budgetConcern) add("budgetPriority", "economicEssential", "scope");
   if (homeLike) add("spaceGuidance", "recreation", "avoidOrg");
   if (venueLike) add("venueComplement", "kidMix", "focusFunMemory");
   if (fun) add("recreation", "kidMix", "focusFunMemory");
-  add("childPersonality", "focusFunMemory", "helpLevel");
+  add("childPersonality", "colorMood", "avoidTheme");
   return picked.slice(0, 3);
 }
 
@@ -1265,7 +1450,7 @@ function generateFinalRecommendation(baseTheme, quizAnswers = {}, refinementAnsw
   const place = quizAnswers.place || "local a definir";
   const cityRegion = quizAnswers.cityRegion || "região a definir";
   const size = quizAnswers.size || "tamanho a definir";
-  const planningStage = quizAnswers.planningStage || "momento do planejamento a definir";
+  const planningStage = answerText(quizAnswers.planningStage) || "momento do planejamento a definir";
   const helpToday = answerText(quizAnswers.agentHelpToday || quizAnswers.mainHelp) || "organizar melhor a festa";
   const style = base.name || "estilo a definir";
   const mainHelp = helpToday;
@@ -1424,11 +1609,18 @@ function generateDevelopmentBriefing(confirmedTheme, quizAnswers, aiPersonalizat
   const finalRecommendation = state.finalRecommendation || normalizeFinalRecommendation(aiPersonalization, state.selectedTheme, quizAnswers, refinement, askedQuestions);
   const giftGuide = state.giftGuide || {};
   const preview = normalizePreview(experiencePreview || generateExperiencePreview(confirmedTheme, quizAnswers, aiPersonalization, selectedModules));
+  const plan = currentPlan() || packagePlans.find(item => item.id === "chosen");
   const interactions = previewList(preview, "interactions");
   const sections = previewList(preview, "sections");
   const wantsGiftGuide = modules.some(module => module.id === "giftGuide") || giftGuideHasContent(giftGuide);
-  const subject = `Solicitação de avaliação - experiência de festa: ${confirmedTheme.themeName}`;
+  const subject = `Solicitação de criação - experiência de festa: ${confirmedTheme.themeName}`;
   const body = [
+    "Plano escolhido:",
+    `- Plano: ${plan.name}`,
+    `- Valor: ${plan.price}`,
+    `- Próximos passos: ${plan.nextSteps}`,
+    plan.note ? `- Observação: ${plan.note}` : "",
+    "",
     "Dados rápidos da festa:",
     `- Nome da criança: ${confirmedTheme.childName || quizAnswers.childName || "Não informado"}`,
     `- Idade: ${confirmedTheme.age || quizAnswers.age || "Não informado"}`,
@@ -1439,7 +1631,7 @@ function generateDevelopmentBriefing(confirmedTheme, quizAnswers, aiPersonalizat
     `- Tamanho estimado: ${quizAnswers.size || "Ainda não sei"}`,
     "",
     "Preferência da família:",
-    `- Momento do planejamento: ${quizAnswers.planningStage || "Não informado"}`,
+    `- Momento do planejamento: ${answerText(quizAnswers.planningStage) || "Não informado"}`,
     `- Tema ou interesse: ${quizAnswers.themeInterest || quizAnswers.themeInterestMode || "Ainda não sei"}`,
     `- Caminho/estilo escolhido: ${confirmedTheme.style || state.selectedPath?.name || "Ainda não sei"}`,
     `- O que quer resolver hoje: ${answerText(quizAnswers.agentHelpToday || quizAnswers.mainHelp) || "Não informado"}`,
@@ -1531,7 +1723,7 @@ function generatePersonalizedChecklist() {
   const modules = selectedModuleDetails();
   const finalRecommendation = state.finalRecommendation || generateFinalRecommendation(state.selectedTheme, answers, state.refinementAnswers, refinementQuestions());
   const helpToday = answerText(answers.agentHelpToday);
-  const stage = answers.planningStage || "momento a definir";
+  const stage = answerText(answers.planningStage) || "momento a definir";
   const place = answers.place || "local a definir";
   const cityRegion = answers.cityRegion || "região a definir";
   const theme = finalRecommendation.conceptName || confirmation.themeName || answers.themeInterest || "tema a definir";
@@ -1673,8 +1865,18 @@ function selectedModuleDetails(ids = state.selectedModules) {
   return featureModules.filter(module => wanted.has(module.id));
 }
 
+function currentPlan() {
+  return packagePlans.find(plan => plan.id === state.selectedPlan) || null;
+}
+
+function packageModuleIds(planId = state.selectedPlan) {
+  const plan = packagePlans.find(item => item.id === planId);
+  if (!plan) return essentialModuleIds();
+  return uniqueList([...essentialModuleIds(), ...plan.moduleIds]);
+}
+
 function recommendedModuleIds(confirmation = currentConfirmation(), answers = state.answers) {
-  return essentialModuleIds();
+  return packageModuleIds(state.selectedPlan || "chosen");
 }
 
 function essentialModuleIds() {
@@ -1715,7 +1917,7 @@ function buildConfirmation(theme, personalization) {
     place: state.answers.place || "",
     cityRegion: state.answers.cityRegion || "",
     size: state.answers.size || "",
-    planningStage: state.answers.planningStage || "",
+    planningStage: answerText(state.answers.planningStage) || "",
     themeInterest: state.answers.themeInterest || state.answers.themeInterestMode || "",
     style: state.selectedPath?.name || state.answers.style || "",
     mainHelp: answerText(state.answers.agentHelpToday || state.answers.mainHelp),

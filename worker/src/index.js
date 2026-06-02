@@ -87,6 +87,7 @@ async function submit(request, env) {
       avoids: text(input.giftGuide?.avoids, "", 1000),
       notes: text(input.giftGuide?.notes, "", 1000)
     },
+    selectedPlan: normalizeSelectedPlan(input.selectedPlan),
     featureModules: normalizeFeatureModules(input.featureModules),
     developmentBriefing: {
       subject: text(input.developmentBriefing?.subject, "", 220),
@@ -349,7 +350,7 @@ async function sendBriefingEmail(env, submission) {
   });
   if (!response.ok) {
     const detail = await response.text();
-    throw error(`Briefing salvo, mas email falhou: ${detail}`, 502);
+    throw error(`Pedido salvo, mas email falhou: ${detail}`, 502);
   }
 }
 
@@ -362,14 +363,19 @@ function emailHtml(submission) {
   const finalRecommendation = submission.finalRecommendation || {};
   const giftGuide = submission.giftGuide || {};
   const checklist = submission.checklist || {};
+  const plan = submission.selectedPlan || {};
   const essential = (submission.featureModules || []).filter(module => module.tier === "standard");
   const mostChosen = (submission.featureModules || []).filter(module => module.tier === "recommended");
   const special = (submission.featureModules || []).filter(module => module.tier === "sophisticated");
   return `<!doctype html><html><body style="font-family:Arial,sans-serif;color:#24151c">
-    <h1>${submission.kind === "production" ? "Enviar para producao" : "Solicitar orcamento"}</h1>
+    <h1>Confirmacao dos dados para ajustes finais</h1>
     <p><b>ID:</b> ${submission.id}</p>
     <p><b>Contato:</b> ${escapeHtml(submission.contact.name)} | ${escapeHtml(submission.contact.email)} | ${escapeHtml(submission.contact.phone)}</p>
     <p><b>Buffet/codigo:</b> ${escapeHtml(submission.buffetCode || brief.buffet)}</p>
+    <h2>Pacote escolhido</h2>
+    <p><b>Plano:</b> ${escapeHtml(plan.name || "Nao informado")} | <b>Valor:</b> ${escapeHtml(plan.price || "Nao informado")}</p>
+    <p><b>Proximos passos:</b> ${escapeHtml(plan.nextSteps || "Nao informado")}</p>
+    ${plan.note ? `<p><b>Observacao:</b> ${escapeHtml(plan.note)}</p>` : ""}
     <h2>Itens da experiencia</h2>
     <p><b>Essencial:</b> ${escapeHtml(essential.map(module => module.name).join(", ") || "Nenhum")}</p>
     <p><b>Mais escolhido:</b> ${escapeHtml(mostChosen.map(module => module.name).join(", ") || "Nenhum")}</p>
@@ -393,11 +399,22 @@ function emailHtml(submission) {
       <h3>${escapeHtml(section.title)}</h3>
       <ul>${(section.items || []).map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
     `).join("")}
-    <h2>Briefing para avaliacao</h2><pre style="white-space:pre-wrap;background:#171018;color:#fff;padding:16px;border-radius:8px">${escapeHtml(developmentBriefing.body)}</pre>
+    <h2>Dados para criacao e avaliacao</h2><pre style="white-space:pre-wrap;background:#171018;color:#fff;padding:16px;border-radius:8px">${escapeHtml(developmentBriefing.body)}</pre>
     <h2>Resumo</h2><p>${escapeHtml(preview.productionSummary || preview.conceptSummary)}</p>
-    <h2>Briefing</h2><pre style="white-space:pre-wrap;background:#fff4f8;padding:16px;border-radius:8px">${escapeHtml(JSON.stringify(brief, null, 2))}</pre>
+    <h2>Dados confirmados</h2><pre style="white-space:pre-wrap;background:#fff4f8;padding:16px;border-radius:8px">${escapeHtml(JSON.stringify(brief, null, 2))}</pre>
     <h2>Preview</h2><pre style="white-space:pre-wrap;background:#f6f7ff;padding:16px;border-radius:8px">${escapeHtml(JSON.stringify(preview, null, 2))}</pre>
   </body></html>`;
+}
+
+function normalizeSelectedPlan(plan) {
+  if (!plan || typeof plan !== "object") return {};
+  return {
+    id: text(plan.id, "", 40),
+    name: text(plan.name, "", 120),
+    price: text(plan.price, "", 80),
+    nextSteps: text(plan.nextSteps, "", 500),
+    note: text(plan.note, "", 220)
+  };
 }
 
 function normalizeMessages(messages) {
