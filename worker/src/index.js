@@ -76,6 +76,20 @@ async function submit(request, env) {
     brief: input.brief || {},
     preview: input.preview || {},
     quizAnswers: input.quizAnswers || {},
+    refinementAnswers: {
+      energy: text(input.refinementAnswers?.energy, "", 120),
+      priority: text(input.refinementAnswers?.priority, "", 120),
+      detail: text(input.refinementAnswers?.detail, "", 800),
+      personalityStory: text(input.refinementAnswers?.personalityStory, "", 1000),
+      giftHints: text(input.refinementAnswers?.giftHints, "", 800)
+    },
+    giftGuide: {
+      clothingSize: text(input.giftGuide?.clothingSize, "", 80),
+      shoeSize: text(input.giftGuide?.shoeSize, "", 80),
+      likes: text(input.giftGuide?.likes, "", 1000),
+      avoids: text(input.giftGuide?.avoids, "", 1000),
+      notes: text(input.giftGuide?.notes, "", 1000)
+    },
     featureModules: normalizeFeatureModules(input.featureModules),
     developmentBriefing: {
       subject: text(input.developmentBriefing?.subject, "", 220),
@@ -340,6 +354,8 @@ function emailHtml(submission) {
   const brief = submission.brief || {};
   const preview = submission.preview || {};
   const developmentBriefing = submission.developmentBriefing || {};
+  const refinement = submission.refinementAnswers || {};
+  const giftGuide = submission.giftGuide || {};
   const standard = (submission.featureModules || []).filter(module => module.tier === "standard");
   const recommended = (submission.featureModules || []).filter(module => module.tier === "recommended");
   const sophisticated = (submission.featureModules || []).filter(module => module.tier === "sophisticated");
@@ -352,6 +368,14 @@ function emailHtml(submission) {
     <p><b>Padrao:</b> ${escapeHtml(standard.map(module => module.name).join(", ") || "Nenhum")}</p>
     <p><b>Recomendados:</b> ${escapeHtml(recommended.map(module => module.name).join(", ") || "Nenhum")}</p>
     <p><b>Sofisticados:</b> ${escapeHtml(sophisticated.map(module => module.name).join(", ") || "Nenhum")}</p>
+    <h2>Detalhes afetivos</h2>
+    <p><b>Dinamica:</b> ${escapeHtml(refinement.energy || "Nao informado")}</p>
+    <p><b>Prioridade:</b> ${escapeHtml(refinement.priority || "Nao informado")}</p>
+    <p><b>Historia/jeitinho:</b> ${escapeHtml(refinement.personalityStory || "Nao informado")}</p>
+    <h2>Guia de presentes</h2>
+    <p><b>Roupa:</b> ${escapeHtml(giftGuide.clothingSize || "Nao informado")} | <b>Calcado:</b> ${escapeHtml(giftGuide.shoeSize || "Nao informado")}</p>
+    <p><b>Pode gostar:</b> ${escapeHtml(giftGuide.likes || refinement.giftHints || "Nao informado")}</p>
+    <p><b>Evitar:</b> ${escapeHtml(giftGuide.avoids || "Nao informado")}</p>
     <h2>Briefing para avaliacao</h2><pre style="white-space:pre-wrap;background:#171018;color:#fff;padding:16px;border-radius:8px">${escapeHtml(developmentBriefing.body)}</pre>
     <h2>Resumo</h2><p>${escapeHtml(preview.productionSummary || preview.conceptSummary)}</p>
     <h2>Briefing</h2><pre style="white-space:pre-wrap;background:#fff4f8;padding:16px;border-radius:8px">${escapeHtml(JSON.stringify(brief, null, 2))}</pre>

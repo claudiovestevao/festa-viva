@@ -65,6 +65,7 @@ const featureModules = [
   { id: "menu", name: "Cardápio", tier: "recommended", description: "Cardápio do buffet ou da festa dentro do site.", section: "Cardápio", interaction: "Consulta rápida do cardápio" },
   { id: "screen", name: "Modo telão", tier: "sophisticated", description: "Fotos, recados e ranking em uma tela durante o evento.", section: "Modo telão para o dia da festa", interaction: "Telão com recados, fotos e ranking" },
   { id: "customGame", name: "Jogo personalizado", tier: "sophisticated", description: "Uma brincadeira digital sob medida para o tema.", section: "Jogo personalizado", interaction: "Mini jogo temático" },
+  { id: "giftGuide", name: "Guia de presentes", tier: "sophisticated", description: "Tamanhos, calçado e ideias do que a criança gosta ou prefere evitar.", section: "Guia de presentes", interaction: "Convidados consultam sugestões antes de comprar presente" },
   { id: "messaging", name: "Disparos por WhatsApp/e-mail", tier: "sophisticated", description: "Convites e lembretes enviados por canais oficiais.", section: "Convites e lembretes automatizados", interaction: "Mensagem de convite e lembrete" }
 ];
 
@@ -82,6 +83,7 @@ const initialState = {
   briefing: null,
   briefingEditable: false,
   selectedModules: [],
+  giftGuide: { clothingSize: "", shoeSize: "", likes: "", avoids: "", notes: "" },
   contact: { name: "", email: "", phone: "", buffetCode: "" },
   loading: "",
   error: ""
@@ -290,6 +292,10 @@ function AIPersonalizationPanel() {
         </div>
         <p class="lead small">Algum detalhe importante?</p>
         <textarea class="textarea compact-area" data-bind="refinementAnswers.detail" placeholder="Ex: ele é tímido, ama jogar bola com os primos e gosta do São Paulo...">${escapeHtml(refinement.detail || "")}</textarea>
+        <p class="lead small">Jeitinho ou história que vale aparecer no site?</p>
+        <textarea class="textarea compact-area" data-bind="refinementAnswers.personalityStory" placeholder="Opcional. Ex: ela inventa coreografias, ele chama todo chute de golaço, tem uma frase engraçada...">${escapeHtml(refinement.personalityStory || "")}</textarea>
+        <p class="lead small">Alguma pista de presente?</p>
+        <textarea class="textarea compact-area" data-bind="refinementAnswers.giftHints" placeholder="Opcional. Ex: tamanho 4, calçado 27, ama massinha e carrinhos, evitar pelúcia...">${escapeHtml(refinement.giftHints || "")}</textarea>
         <div class="cta-row">
           <button class="button primary" data-action="generate-refinement" ${state.loading || !canAskAi ? "disabled" : ""}>Ver recomendação da IA</button>
           <button class="button secondary" data-action="choose-selected">Usar tema base</button>
@@ -429,11 +435,33 @@ function FeatureSelectionStep() {
         </div>
       </section>
     </div>
+    ${state.selectedModules.includes("giftGuide") ? GiftGuidePanel() : ""}
     <div class="cta-row">
       <button class="button primary" data-action="continue-to-preview" ${state.selectedModules.length ? "" : "disabled"}>Gerar prévia</button>
       <button class="button secondary" data-action="back-to-confirm">Voltar ao tema</button>
     </div>
   `, "Itens da festa", 100);
+}
+
+function GiftGuidePanel() {
+  const guide = state.giftGuide || {};
+  return `
+    <section class="panel gift-panel">
+      <div class="module-note">
+        <strong>Guia de presentes para convidados</strong>
+        <p>Preencha só o que já souber. Isso pode virar uma área simples no site para evitar presente repetido, tamanho errado ou brinquedo que não combina.</p>
+      </div>
+      <div class="form-grid two gift-fields">
+        ${inputField("Tamanho de roupa", "giftGuide.clothingSize", guide.clothingSize)}
+        ${inputField("Número do calçado", "giftGuide.shoeSize", guide.shoeSize)}
+      </div>
+      <div class="form-grid two gift-fields">
+        ${textareaField("Brinquedos, temas ou presentes que a criança pode gostar", "giftGuide.likes", guide.likes, "Ex: futebol, blocos de montar, livros com animais, massinha...")}
+        ${textareaField("O que prefere evitar", "giftGuide.avoids", guide.avoids, "Ex: brinquedo com peças pequenas, eletrônico barulhento, pelúcia...")}
+      </div>
+      ${textareaField("Observação para os convidados", "giftGuide.notes", guide.notes, "Ex: presente é opcional; o mais importante é vir brincar com a gente.")}
+    </section>
+  `;
 }
 
 function FeatureModuleCard(module, recommended = []) {
@@ -616,6 +644,15 @@ function inputField(label, bind, value) {
   `;
 }
 
+function textareaField(label, bind, value, placeholder = "") {
+  return `
+    <label>
+      ${escapeHtml(label)}
+      <textarea class="textarea short" data-bind="${escapeAttr(bind)}" placeholder="${escapeAttr(placeholder)}">${escapeHtml(value || "")}</textarea>
+    </label>
+  `;
+}
+
 function AnswerStrip() {
   const entries = questions
     .slice(0, state.questionIndex)
@@ -671,6 +708,16 @@ function handleInput(event) {
   setDeepValue(state, bind, event.target.value);
   saveState();
   if (bind.startsWith("confirmation.")) {
+    state.preview = null;
+    state.briefing = null;
+  }
+  if (bind.startsWith("giftGuide.")) {
+    state.preview = null;
+    state.briefing = null;
+  }
+  if (bind.startsWith("refinementAnswers.")) {
+    state.refinedThemes = [];
+    state.error = "";
     state.preview = null;
     state.briefing = null;
   }
@@ -731,7 +778,9 @@ async function refineWithAI() {
   const userDescription = [
     `Dinâmica esperada: ${refinement.energy}.`,
     `Não pode faltar: ${refinement.priority}.`,
-    refinement.detail ? `Detalhe da família: ${refinement.detail}.` : ""
+    refinement.detail ? `Detalhe da família: ${refinement.detail}.` : "",
+    refinement.personalityStory ? `Jeito ou história da criança: ${refinement.personalityStory}.` : "",
+    refinement.giftHints ? `Pistas de presente: ${refinement.giftHints}.` : ""
   ].filter(Boolean).join(" ");
   try {
     const response = await api("/refine", {
@@ -813,6 +862,8 @@ async function sendEmail() {
       brief: currentConfirmation(),
       preview: state.preview,
       quizAnswers: state.answers,
+      refinementAnswers: state.refinementAnswers,
+      giftGuide: state.giftGuide,
       featureModules: selectedModuleDetails(),
       developmentBriefing: briefing
     });
@@ -987,9 +1038,12 @@ function generateDevelopmentBriefing(confirmedTheme, quizAnswers, aiPersonalizat
   const standardModules = modules.filter(module => module.tier === "standard");
   const recommendedModules = modules.filter(module => module.tier === "recommended");
   const sophisticatedModules = modules.filter(module => module.tier === "sophisticated");
+  const refinement = state.refinementAnswers || {};
+  const giftGuide = state.giftGuide || {};
   const preview = normalizePreview(experiencePreview || generateExperiencePreview(confirmedTheme, quizAnswers, aiPersonalization, selectedModules));
   const interactions = previewList(preview, "interactions");
   const sections = previewList(preview, "sections");
+  const wantsGiftGuide = modules.some(module => module.id === "giftGuide") || giftGuideHasContent(giftGuide) || Boolean(refinement.giftHints);
   const subject = `Solicitação de avaliação - experiência de festa: ${confirmedTheme.themeName}`;
   const body = [
     `Tema escolhido: ${confirmedTheme.themeName}`,
@@ -1004,6 +1058,13 @@ function generateDevelopmentBriefing(confirmedTheme, quizAnswers, aiPersonalizat
     "Resumo do conceito:",
     preview.conceptSummary,
     "",
+    "Detalhes afetivos para personalização:",
+    `- Dinâmica esperada: ${refinement.energy || "Não informado"}`,
+    `- O que não pode faltar: ${refinement.priority || "Não informado"}`,
+    `- Detalhe geral da família: ${refinement.detail || "Não informado"}`,
+    `- Jeitinho ou história engraçada: ${refinement.personalityStory || "Não informado"}`,
+    `- Pistas de presente citadas no chat: ${refinement.giftHints || "Não informado"}`,
+    "",
     "Itens padrão da experiência:",
     ...(standardModules.length ? standardModules.map(module => `- ${module.name}: ${module.description}`) : ["- Nenhum item padrão selecionado."]),
     "",
@@ -1013,6 +1074,15 @@ function generateDevelopmentBriefing(confirmedTheme, quizAnswers, aiPersonalizat
     "Itens sofisticados para avaliação do time:",
     ...(sophisticatedModules.length ? sophisticatedModules.map(module => `- ${module.name}: ${module.description}`) : ["- Nenhum item sofisticado selecionado."]),
     "",
+    ...(wantsGiftGuide ? [
+      "Guia de presentes:",
+      `- Tamanho de roupa: ${giftGuide.clothingSize || "Não informado"}`,
+      `- Número do calçado: ${giftGuide.shoeSize || "Não informado"}`,
+      `- Brinquedos/temas que pode gostar: ${giftGuide.likes || "Não informado"}`,
+      `- O que prefere evitar: ${giftGuide.avoids || "Não informado"}`,
+      `- Observação para convidados: ${giftGuide.notes || "Não informado"}`,
+      ""
+    ] : []),
     "Ideias de interação:",
     ...interactions.map(item => `- ${item}`),
     "",
@@ -1063,6 +1133,10 @@ function recommendedModuleIds(confirmation = currentConfirmation(), answers = st
 
 function uniqueList(items) {
   return [...new Set(items.filter(Boolean))];
+}
+
+function giftGuideHasContent(giftGuide = {}) {
+  return ["clothingSize", "shoeSize", "likes", "avoids", "notes"].some(key => String(giftGuide[key] || "").trim());
 }
 
 function buildConfirmation(theme, personalization) {

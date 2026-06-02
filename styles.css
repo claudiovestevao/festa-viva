@@ -498,6 +498,16 @@ p {
   gap: 10px;
 }
 
+.gift-panel {
+  display: grid;
+  gap: 12px;
+  margin: 14px 0;
+}
+
+.gift-fields {
+  margin-top: 0;
+}
+
 .module-card {
   width: 100%;
   min-height: 136px;
