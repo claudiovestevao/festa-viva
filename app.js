@@ -173,6 +173,33 @@ const buffetScaleOptions = [
   }
 ];
 
+const partyThemeCatalog = [
+  { name: "Futebol", path: "fun", keywords: ["futebol", "bola", "esporte", "time", "tricolor", "são paulo", "sao paulo", "palmeiras", "corinthians", "santos", "flamengo"], ages: ["5 anos", "6 anos", "7 anos", "8 anos", "9 anos", "10 anos", "Mais de 10 anos"], whyFits: "Tema clássico, fácil de entender e ótimo para brincadeiras com as crianças.", cost: "Equilibrado", difficulty: "Baixa a média" },
+  { name: "Minnie Rosa", path: "emotional", keywords: ["minnie", "rosa", "disney"], ages: ["1 ano", "2 anos", "3 anos", "4 anos", "5 anos"], whyFits: "Tema muito conhecido, delicado e fácil de adaptar em convite, mesa e fotos.", cost: "Médio", difficulty: "Média" },
+  { name: "Mickey", path: "fun", keywords: ["mickey", "disney"], ages: ["1 ano", "2 anos", "3 anos", "4 anos", "5 anos"], whyFits: "Tema alegre, reconhecível e com boa variedade de decoração no Brasil.", cost: "Médio", difficulty: "Média" },
+  { name: "Fazendinha", path: "emotional", keywords: ["fazendinha", "bichos", "animais", "animal"], ages: ["1 ano", "2 anos", "3 anos", "4 anos"], whyFits: "Tema acolhedor, comum em festas infantis e simples de executar.", cost: "Equilibrado", difficulty: "Baixa" },
+  { name: "Safari", path: "emotional", keywords: ["safari", "leão", "leao", "girafa", "selva", "animais", "animal"], ages: ["1 ano", "2 anos", "3 anos", "4 anos", "5 anos"], whyFits: "Funciona bem para crianças pequenas, fotos bonitas e decoração fácil de encontrar.", cost: "Médio", difficulty: "Baixa a média" },
+  { name: "Dinossauros", path: "fun", keywords: ["dinossauro", "dino", "jurassic"], ages: ["2 anos", "3 anos", "4 anos", "5 anos", "6 anos", "7 anos"], whyFits: "Tema divertido, visualmente forte e ótimo para brincadeiras simples.", cost: "Médio", difficulty: "Baixa a média" },
+  { name: "Princesas", path: "emotional", keywords: ["princesa", "princesas", "castelo", "fantasia"], ages: ["3 anos", "4 anos", "5 anos", "6 anos", "7 anos"], whyFits: "Tema tradicional, fácil de decorar e bom para uma festa delicada.", cost: "Médio", difficulty: "Média" },
+  { name: "Super-Heróis", path: "fun", keywords: ["herói", "herois", "heróis", "super", "vingadores", "spider", "homem aranha", "batman"], ages: ["4 anos", "5 anos", "6 anos", "7 anos", "8 anos"], whyFits: "Tema com energia, movimento e brincadeiras, bom para crianças maiores.", cost: "Médio", difficulty: "Média" },
+  { name: "Carros", path: "fun", keywords: ["carro", "carros", "corrida", "relâmpago", "relampago"], ages: ["2 anos", "3 anos", "4 anos", "5 anos", "6 anos"], whyFits: "Tema direto, colorido e fácil de transformar em convite, pista e brincadeiras.", cost: "Médio", difficulty: "Média" },
+  { name: "Astronauta", path: "fun", keywords: ["astronauta", "espaço", "espaco", "planeta", "foguete"], ages: ["4 anos", "5 anos", "6 anos", "7 anos", "8 anos"], whyFits: "Tema criativo, mas ainda possível de executar com elementos simples.", cost: "Médio", difficulty: "Média" },
+  { name: "Unicórnios", path: "emotional", keywords: ["unicórnio", "unicornio", "arco iris", "arco-íris"], ages: ["3 anos", "4 anos", "5 anos", "6 anos", "7 anos"], whyFits: "Tema comum, colorido e fácil de montar sem depender de personagem específico.", cost: "Médio", difficulty: "Baixa a média" },
+  { name: "Jardim Encantado", path: "emotional", keywords: ["jardim", "flores", "borboleta", "natureza", "delicado"], ages: ["1 ano", "2 anos", "3 anos", "4 anos", "5 anos"], whyFits: "Tema delicado e fotogênico, bom para famílias que querem algo afetivo.", cost: "Equilibrado", difficulty: "Baixa a média" },
+  { name: "Circo", path: "fun", keywords: ["circo", "palhaço", "palhaco", "picadeiro"], ages: ["1 ano", "2 anos", "3 anos", "4 anos", "5 anos", "6 anos"], whyFits: "Tema clássico, alegre e com boa leitura para crianças e adultos.", cost: "Equilibrado", difficulty: "Baixa" },
+  { name: "Fundo do Mar", path: "emotional", keywords: ["mar", "sereia", "peixe", "tubarão", "tubarao", "oceano"], ages: ["1 ano", "2 anos", "3 anos", "4 anos", "5 anos", "6 anos"], whyFits: "Tema visual, lúdico e fácil de adaptar com tons de azul e elementos simples.", cost: "Médio", difficulty: "Média" },
+  { name: "Games", path: "fun", keywords: ["game", "games", "minecraft", "roblox", "videogame", "mario"], ages: ["6 anos", "7 anos", "8 anos", "9 anos", "10 anos", "Mais de 10 anos"], whyFits: "Tema forte para crianças maiores e bom para quiz, missões e brincadeiras digitais.", cost: "Médio", difficulty: "Média" },
+  { name: "Bailarina", path: "emotional", keywords: ["bailarina", "dança", "danca", "balé", "bale"], ages: ["3 anos", "4 anos", "5 anos", "6 anos", "7 anos"], whyFits: "Tema delicado, organizado e fácil de transformar em convite e lembrancinhas.", cost: "Médio", difficulty: "Baixa a média" },
+  { name: "Bolofofos", path: "fun", keywords: ["bolofofos", "fofo", "música", "musica"], ages: ["1 ano", "2 anos", "3 anos"], whyFits: "Tema comum para crianças pequenas e fácil de comunicar para convidados.", cost: "Médio", difficulty: "Média" },
+  { name: "Bluey", path: "fun", keywords: ["bluey", "cachorro", "desenho"], ages: ["2 anos", "3 anos", "4 anos", "5 anos", "6 anos"], whyFits: "Tema atual, familiar e bom para uma festa leve com brincadeiras.", cost: "Médio", difficulty: "Média" },
+  { name: "Galinha Pintadinha", path: "fun", keywords: ["galinha", "pintadinha", "música", "musica"], ages: ["1 ano", "2 anos", "3 anos"], whyFits: "Tema muito reconhecido para crianças pequenas e fácil de executar.", cost: "Médio", difficulty: "Baixa a média" },
+  { name: "Patrulha Canina", path: "fun", keywords: ["patrulha", "canina", "cachorro", "cachorros"], ages: ["2 anos", "3 anos", "4 anos", "5 anos", "6 anos"], whyFits: "Tema conhecido, cheio de cores e bom para brincadeiras em grupo.", cost: "Médio", difficulty: "Média" },
+  { name: "Bosque", path: "emotional", keywords: ["bosque", "floresta", "natureza", "raposa", "ursinho"], ages: ["1 ano", "2 anos", "3 anos", "4 anos"], whyFits: "Tema bonito, acolhedor e menos carregado que personagens licenciados.", cost: "Equilibrado", difficulty: "Baixa a média" },
+  { name: "Piquenique", path: "emotional", keywords: ["piquenique", "picnic", "parque", "ar livre"], ages: ["1 ano", "2 anos", "3 anos", "4 anos", "5 anos"], whyFits: "Tema simples, afetivo e bom para festa em casa, condomínio ou ao ar livre.", cost: "Baixo a médio", difficulty: "Baixa" },
+  { name: "Balada Kids", path: "fun", keywords: ["balada", "neon", "dança", "danca", "música", "musica"], ages: ["7 anos", "8 anos", "9 anos", "10 anos", "Mais de 10 anos"], whyFits: "Tema bom para crianças maiores, com música, luzes e interação.", cost: "Médio a alto", difficulty: "Média" },
+  { name: "Neon", path: "fun", keywords: ["neon", "brilha", "glow"], ages: ["7 anos", "8 anos", "9 anos", "10 anos", "Mais de 10 anos"], whyFits: "Tema moderno para crianças maiores e fácil de combinar com fotos e música.", cost: "Médio", difficulty: "Média" }
+];
+
 const initialState = {
   screen: "home",
   questionIndex: 0,
@@ -407,8 +434,8 @@ function OptionChip(question, option) {
 function ThemeSuggestionsStep() {
   return StepShell(`
     <div class="section-title">
-      <h2>Escolha o caminho da festa</h2>
-      <p class="lead">A IA usou suas respostas para sugerir caminhos possíveis. Escolha o que mais combina com sua família.</p>
+      <h2>Escolha 1 dos 3 temas sugeridos</h2>
+      <p class="lead">O Agente Festeiro usa um catálogo fechado de temas comuns e possíveis de executar. Nada de ideia mirabolante: escolha o tema que mais combina com a família.</p>
     </div>
     <div class="cards">
       ${state.suggestions.map((theme, index) => ThemeSuggestionCard(theme, index)).join("")}
@@ -426,7 +453,7 @@ function ThemeSuggestionCard(theme, index) {
       <h3>${escapeHtml(theme.name)}</h3>
       <p class="micro">${escapeHtml(theme.whyFits)}</p>
       <div class="card-actions">
-        <button class="button primary" data-action="choose-theme" data-index="${index}">Escolher caminho</button>
+        <button class="button primary" data-action="choose-theme" data-index="${index}">Escolher tema</button>
       </div>
     </article>
   `;
@@ -437,7 +464,7 @@ function PathRefinementChoiceStep() {
   return StepShell(`
     <div class="assistant-layout">
       <aside class="assistant-card">
-        <p><strong>Caminho escolhido:</strong> ${escapeHtml(theme.name || "Festa personalizada")}</p>
+        <p><strong>Tema escolhido:</strong> ${escapeHtml(theme.name || "Festa personalizada")}</p>
         <p class="micro">${escapeHtml(theme.whyFits || "Um caminho possível para sua família avançar com mais clareza.")}</p>
       </aside>
       <section class="question-card">
@@ -445,8 +472,8 @@ function PathRefinementChoiceStep() {
         <p class="lead">A IA pode refinar o tema escolhido com base na idade da criança, estilo da família, tipo de festa, investimento aproximado e experiências desejadas. Assim, a festa fica mais personalizada, surpreendente e especial para os convidados.</p>
         <div class="cta-row">
           <button class="button primary" data-action="start-path-refine">Sim, quero refinar com a IA</button>
-          <button class="button secondary" data-action="skip-path-refine">Não, quero seguir com esse caminho</button>
-          <button class="button ghost" data-action="back-to-suggestions">Escolher outro caminho</button>
+          <button class="button secondary" data-action="skip-path-refine">Não, quero seguir com esse tema</button>
+          <button class="button ghost" data-action="back-to-suggestions">Escolher outro tema</button>
         </div>
       </section>
     </div>
@@ -551,7 +578,7 @@ function FinalRecommendationStep() {
       <div class="cta-row">
         <button class="button primary" data-action="confirm-theme">Montar experiência da festa</button>
         <button class="button secondary" data-action="refine-current">Refinar mais</button>
-        <button class="button ghost" data-action="back-to-suggestions">Escolher outro caminho</button>
+        <button class="button ghost" data-action="back-to-suggestions">Escolher outro tema</button>
       </div>
     </section>
   `, "Recomendação", 100);
@@ -1325,100 +1352,39 @@ function generateThemeRecommendations(answers) {
     answerText(answers.mustHave),
     answerText(answers.planningStage)
   ].join(" ").toLowerCase();
-  const wantsHelp = /ajuda da ia|ainda não sei|ideias|escolher/i.test(text);
-  const isFootball = /futebol|bola|são paulo|sao paulo|tricolor|palmeiras|corinthians|santos|flamengo|time/i.test(text);
-  const isDino = /dinossauro|dino/i.test(text);
-  const isPrincess = /princesa|princesas|castelo|fantasia/i.test(text);
-  const isDisney = /minnie|mickey|disney|bluey|personagem|desenho/i.test(text);
-  const isNature = /animal|animais|natureza|fazendinha|jardim|ar livre/i.test(text);
-  const isHero = /herói|herois|heróis|super/i.test(text);
-  const isCreative = /criativo|diferente|memorável|personalizada|emocionante/i.test(text);
-  const isPractical = /organizar|checklist|tempo|dinheiro|simples|econômico|detalhes/i.test(text);
-  const pool = [];
-  const add = (item) => {
-    if (!pool.some(existing => existing.name === item.name)) pool.push(item);
-  };
+  const age = answers.age || "";
+  const place = answers.place || "";
+  const wantsPractical = /organizar|checklist|tempo|dinheiro|simples|econômico|detalhes|praticidade/i.test(text);
+  const wantsFun = /brincadeira|divertida|atração|atracao|recreação|recreacao|crianças|criancas/i.test(text);
+  const wantsMemory = /memória|memoria|emocionante|personalizada|história|historia|foto|recado|site/i.test(text);
+  const simpleVenue = ["Casa", "Salão do condomínio", "Escola"].includes(place);
 
-  if (isFootball) add({
-    name: "Festa Futebol do Aniversariante",
-    path: "fun",
-    whyFits: "Uma festa com clima de mini estádio, convite em formato de ingresso, brincadeira de chute ao gol e muita energia para crianças que amam bola.",
-    cost: "Equilibrado",
-    difficulty: "Média"
-  });
-  if (isDino) add({
-    name: "Dinossauros Divertidos",
-    path: "fun",
-    whyFits: "Um caminho colorido, fácil de reconhecer e ótimo para brincadeiras, caça aos ovos, pegadas no chão e fotos com muita imaginação.",
-    cost: "Médio",
-    difficulty: "Baixa a média"
-  });
-  if (isPrincess) add({
-    name: "Princesas Modernas",
-    path: "emotional",
-    whyFits: "Uma direção delicada, afetiva e sem exagero, com cores suaves, convite encantador e detalhes que valorizam a criança sem ficar engessado.",
-    cost: "Médio",
-    difficulty: "Média"
-  });
-  if (isDisney) add({
-    name: "Disney Mágica",
-    path: "emotional",
-    whyFits: "Uma festa alegre e fotogênica, com personagem como inspiração, paleta forte, convite marcante e espaço para memórias da família.",
-    cost: "Médio a alto",
-    difficulty: "Média"
-  });
-  if (isNature) add({
-    name: "Jardim Encantado",
-    path: "emotional",
-    whyFits: "Uma festa delicada, lúdica e cheia de detalhes afetivos, ideal para famílias que querem uma experiência doce, fotogênica e acolhedora.",
-    cost: "Equilibrado",
-    difficulty: "Baixa a média"
-  });
-  if (isHero) add({
-    name: "Super-Heróis em Missão",
-    path: "fun",
-    whyFits: "Uma festa com energia, pequenas missões, medalhas e participação dos convidados, boa para crianças que gostam de ação e brincadeira.",
-    cost: "Médio",
-    difficulty: "Média"
-  });
-  if (isCreative || wantsHelp) add({
-    name: "Arco-Íris Criativo",
-    path: "practical",
-    whyFits: "Um caminho alegre, flexível e fácil de adaptar quando a família ainda está buscando ideias ou quer uma festa bonita sem depender de um personagem.",
-    cost: "Equilibrado",
-    difficulty: "Baixa"
-  });
-  if (isPractical) add({
-    name: "Festa Prática e Charmosa",
-    path: "practical",
-    whyFits: "Uma comemoração bonita, organizada e sem exageros, pensada para reduzir retrabalho, centralizar informações e facilitar confirmações.",
-    cost: "Baixo a médio",
-    difficulty: "Baixa"
+  const scored = partyThemeCatalog.map((theme, index) => {
+    const keywordScore = theme.keywords.reduce((score, keyword) => score + (text.includes(keyword) ? 18 : 0), 0);
+    const ageScore = theme.ages.includes(age) ? 5 : 0;
+    const practicalScore = wantsPractical && /Baixa|Equilibrado|Baixo/i.test(`${theme.cost} ${theme.difficulty}`) ? 3 : 0;
+    const funScore = wantsFun && theme.path === "fun" ? 3 : 0;
+    const memoryScore = wantsMemory && theme.path === "emotional" ? 3 : 0;
+    const venueScore = simpleVenue && /Baixa|Baixo|Equilibrado/i.test(`${theme.cost} ${theme.difficulty}`) ? 2 : 0;
+    const unknownBoost = /ajuda da ia|ainda não sei|ideias|escolher/i.test(text) && ["Fazendinha", "Safari", "Dinossauros", "Jardim Encantado", "Futebol", "Minnie Rosa"].includes(theme.name) ? 2 : 0;
+    return {
+      ...theme,
+      score: keywordScore + ageScore + practicalScore + funScore + memoryScore + venueScore + unknownBoost,
+      keywordScore,
+      index
+    };
   });
 
-  add({
-    name: "Fazendinha Afetiva",
-    path: "emotional",
-    whyFits: "Um tema acolhedor, possível de executar no Brasil e ótimo para crianças pequenas, com decoração simples, fotos bonitas e clima familiar.",
-    cost: "Equilibrado",
-    difficulty: "Baixa"
-  });
-  add({
-    name: "Festa Divertida dos Amigos",
-    path: "fun",
-    whyFits: "Uma direção focada em brincadeiras, participação dos convidados, RSVP organizado e momentos leves para o dia da festa.",
-    cost: "Médio",
-    difficulty: "Média"
-  });
-  add({
-    name: "Memórias do Aniversariante",
-    path: "emotional",
-    whyFits: "Uma proposta com história da criança, fotos, mensagens e detalhes afetivos para transformar a festa em lembrança da família.",
-    cost: "Médio",
-    difficulty: "Média"
-  });
+  const ranked = scored.sort((a, b) => b.score - a.score || a.index - b.index);
+  const direct = ranked.filter(theme => theme.keywordScore > 0);
+  const base = direct.length ? direct : ranked;
+  const preferredPaths = new Set(base.slice(0, 2).map(theme => theme.path));
+  const fallback = ranked.filter(theme => !base.some(item => item.name === theme.name) && (!direct.length || preferredPaths.has(theme.path)));
+  const broaderFallback = ranked.filter(theme => !base.some(item => item.name === theme.name) && !fallback.some(item => item.name === theme.name));
 
-  return pool.slice(0, 5);
+  return [...base, ...fallback, ...broaderFallback]
+    .slice(0, 3)
+    .map(({ score, keywordScore, index, keywords, ages, ...theme }) => theme);
 }
 
 function refinementQuestions() {

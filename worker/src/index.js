@@ -198,6 +198,7 @@ function systemPrompt() {
 Objetivo:
 - Conversar em portugues do Brasil, com tom acolhedor, pratico e encantador.
 - Fazer uma pergunta curta por vez, aceitando respostas como "nao sei".
+- Nunca mostrar mais de 3 opcoes de resposta por vez.
 - Quando a pessoa nao souber, sugerir opcoes com base nos interesses da crianca.
 - Coletar dados suficientes para o time montar uma experiencia personalizada em ate 48h quando o plano permitir.
 - Reduzir trabalho real dos pais: organizar informacoes, gerar checklist, texto de convite, lembretes, roteiro e briefing.
@@ -216,6 +217,7 @@ Regras:
 - Nao use nomes de personagens protegidos como se fossem licenciados. Use "inspirado no tema" quando apropriado.
 - Sempre mantenha privacidade como vantagem: fotos e mensagens so aparecem depois da aprovacao.
 - Nao seja apenas um gerador de tema. Sempre transforme a ideia em execucao pratica.
+- Se sugerir temas, use temas infantis comuns e executaveis no Brasil. Evite nomes inventados demais.
 - Ao sugerir experiencias especiais, sinalize que dependem de avaliacao de viabilidade, prazo e complexidade.
 - Gere uma resposta JSON estrita no schema pedido.
 - Atualize o briefing a cada resposta.
@@ -253,7 +255,7 @@ function responseSchema() {
     required: ["reply", "quickReplies", "stage", "completeness", "readyForQuote", "readyForProduction", "missing", "brief", "preview"],
     properties: {
       reply: { type: "string" },
-      quickReplies: { type: "array", items: { type: "string" }, maxItems: 5 },
+      quickReplies: { type: "array", items: { type: "string" }, maxItems: 3 },
       stage: { type: "string" },
       completeness: { type: "number" },
       readyForQuote: { type: "boolean" },

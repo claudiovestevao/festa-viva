@@ -12,6 +12,7 @@ Mitigacoes principais:
 - IA como enfeite: gerar entregaveis praticos como convite, checklist, mensagens, lembretes, roteiro, quiz e briefing.
 - Preco baixo demais: manter plano de entrada e concentrar margem em planos completos, experiencias especiais e pacotes recorrentes para buffets.
 - Concorrencia de convite digital: vender experiencia da festa antes, durante e depois, nao apenas um link com RSVP.
+- Temas impossiveis ou genericos demais: sugerir no maximo 3 opcoes a partir de um catalogo fechado de temas infantis comuns e executaveis.
 
 Fluxo:
 
