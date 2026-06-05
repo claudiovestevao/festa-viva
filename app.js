@@ -128,6 +128,51 @@ const packagePlans = [
   }
 ];
 
+const productEngineBlocks = [
+  {
+    title: "Temas-base reaproveitáveis",
+    text: "Minnie, futebol, dinossauros, jardim, fazendinha, heróis e outros caminhos viram ponto de partida, não criação do zero."
+  },
+  {
+    title: "Blocos prontos de experiência",
+    text: "Convite, RSVP, presentes, história, fotos, quiz, roteiro, recados e pós-festa entram como peças combináveis."
+  },
+  {
+    title: "Prompts e checklist por contexto",
+    text: "A IA considera idade, local, cidade, tamanho, data e momento do planejamento para gerar orientações úteis."
+  },
+  {
+    title: "Revisão humana focada",
+    text: "O time revisa conceito, viabilidade e acabamento. A meta é evitar que cada festa vire uma agência sob demanda."
+  }
+];
+
+const aiOperationalOutputs = [
+  "Texto do convite",
+  "Checklist personalizado",
+  "Mensagem de WhatsApp para convidados",
+  "Lembrete de RSVP",
+  "Roteiro do dia da festa",
+  "Ideias de presentes",
+  "Perguntas para quiz",
+  "Briefing pronto para produção"
+];
+
+const buffetScaleOptions = [
+  {
+    title: "Piloto com buffet",
+    text: "Ideal para testar com 5 a 10 festas, validar operação e ajustar temas mais vendidos."
+  },
+  {
+    title: "Pacote recorrente",
+    text: "Para redes que querem 10, 30 ou 50 mini-apps por mês, com templates e condições comerciais próprias."
+  },
+  {
+    title: "Experiências especiais",
+    text: "Para festas premium, com álbum aprovado pelos pais, retrospectiva, cápsula do tempo e combinações sob medida."
+  }
+];
+
 const initialState = {
   screen: "home",
   questionIndex: 0,
@@ -213,13 +258,14 @@ function MinimalHome() {
     <section class="home screen">
       <div class="home-card">
         <div class="brand"><span class="brand-mark"></span> Agente Festeiro</div>
-        <h1>Prepare uma festa especial com menos correria</h1>
-        <p class="lead">O Agente Festeiro ajuda famílias a planejar melhor a comemoração, organizar informações para convidados e criar memórias inesquecíveis usando as facilidades do mundo digital.</p>
+        <h1>Prepare uma festa especial sem repetir tudo mil vezes</h1>
+        <p class="lead">O Agente Festeiro ajuda famílias a transformar ideias soltas em uma festa bonita, organizada e possível de executar. Ele centraliza informações para convidados, reduz retrabalho com fornecedores e cria memórias usando as facilidades do mundo digital.</p>
+        ${ProductValueStrip()}
         <div class="home-options">
           <button class="route-card planner featured" data-action="start">
             <span class="route-eyebrow">Assistente</span>
             <strong>Começar planejamento</strong>
-            <small>Conte uma vez os detalhes da festa e receba caminhos, checklist, convite, RSVP e ideias de experiências para encantar convidados.</small>
+            <small>Conte uma vez os detalhes da festa e receba tema, checklist, convite, RSVP, mensagens para convidados e ideias de experiências.</small>
           </button>
           <div class="demo-area">
             <p class="micro"><strong>Demos de experiências personalizadas</strong></p>
@@ -237,9 +283,19 @@ function MinimalHome() {
             </div>
           </div>
         </div>
-        <p class="micro">Menos repetição de informações com fornecedores, mais clareza para convidados e mais cuidado com as memórias da família.</p>
+        ${BuffetScalePanel("compact")}
       </div>
     </section>
+  `;
+}
+
+function ProductValueStrip() {
+  return `
+    <div class="value-strip" aria-label="Valor do Agente Festeiro">
+      <span><strong>Planeja</strong> tema, prioridades e roteiro</span>
+      <span><strong>Organiza</strong> convidados, RSVP e informações</span>
+      <span><strong>Memoriza</strong> fotos, recados e pós-festa</span>
+    </div>
   `;
 }
 
@@ -491,6 +547,7 @@ function FinalRecommendationStep() {
           </ul>
         </div>
       </div>
+      ${RecommendationOpsPanel(recommendation)}
       <div class="cta-row">
         <button class="button primary" data-action="confirm-theme">Montar experiência da festa</button>
         <button class="button secondary" data-action="refine-current">Refinar mais</button>
@@ -500,17 +557,38 @@ function FinalRecommendationStep() {
   `, "Recomendação", 100);
 }
 
+function RecommendationOpsPanel(recommendation) {
+  const outputs = [
+    `Convite: ${recommendation.inviteAngle || "texto alinhado ao conceito escolhido"}`,
+    `RSVP: ${recommendation.rsvpAngle || "confirmação simples para reduzir perguntas no WhatsApp"}`,
+    `Dia da festa: ${recommendation.dayPlan || "roteiro curto para chegada, brincadeira, fotos e parabéns"}`,
+    `Memórias: ${recommendation.memoryPlan || "fotos, recados e pós-festa organizados em um só lugar"}`
+  ];
+  return `
+    <div class="ops-panel">
+      <span class="route-eyebrow">Plano prático</span>
+      <h3>A IA já transformou o tema em próximos passos</h3>
+      <div class="output-grid compact">
+        ${outputs.map(item => `<span>${escapeHtml(item)}</span>`).join("")}
+      </div>
+    </div>
+  `;
+}
+
 function FeatureSelectionStep() {
   const selectedPlan = currentPlan();
   return StepShell(`
     <div class="section-title">
-      <h2>Escolha o pacote da festa</h2>
-      <p class="lead">Escolha o plano que combina com o momento da sua família. Cada opção mostra preço, entregáveis e próximos passos de forma transparente.</p>
+      <h2>Escolha como sua festa vai sair do papel</h2>
+      <p class="lead">Os pacotes combinam blocos prontos de experiência com revisão humana. Assim a festa fica personalizada sem virar um projeto confuso ou caro demais.</p>
     </div>
+    ${ProductEnginePanel()}
     <div class="package-grid">
       ${packagePlans.map(plan => PackagePlanCard(plan)).join("")}
     </div>
     ${selectedPlan ? PackageNextSteps(selectedPlan) : ""}
+    ${AIOutputPanel()}
+    ${BuffetScalePanel()}
     ${state.selectedModules.includes("giftGuide") ? GiftGuidePanel() : ""}
     <p class="micro final-note">Você poderá revisar seus dados na próxima etapa antes de enviar as informações finais.</p>
     <div class="cta-row">
@@ -518,6 +596,61 @@ function FeatureSelectionStep() {
       <button class="button secondary" data-action="back-to-confirm">Voltar ao tema</button>
     </div>
   `, "Pacote", 100);
+}
+
+function ProductEnginePanel() {
+  return `
+    <section class="engine-panel" aria-label="Como o Agente Festeiro escala a personalização">
+      <div>
+        <span class="route-eyebrow">Produto modular</span>
+        <h3>Personalizado sem começar do zero</h3>
+        <p>O Agente combina tema-base, blocos de experiência, prompts e checklist. O time entra para ajustar o que importa: viabilidade, acabamento e detalhes da família.</p>
+      </div>
+      <div class="engine-grid">
+        ${productEngineBlocks.map(block => `
+          <article>
+            <strong>${escapeHtml(block.title)}</strong>
+            <small>${escapeHtml(block.text)}</small>
+          </article>
+        `).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function AIOutputPanel() {
+  return `
+    <section class="output-panel" aria-label="Entregáveis gerados pelo Agente Festeiro">
+      <div>
+        <span class="route-eyebrow">IA útil</span>
+        <h3>Além de sugerir tema, a IA já prepara materiais práticos</h3>
+        <p class="micro">Esses itens reduzem trabalho real dos pais e ajudam o time a montar a festa com menos idas e vindas.</p>
+      </div>
+      <div class="output-grid">
+        ${aiOperationalOutputs.map(item => `<span>${escapeHtml(item)}</span>`).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function BuffetScalePanel(variant = "") {
+  return `
+    <section class="buffet-panel ${variant}" aria-label="Opções para buffets e redes">
+      <div>
+        <span class="route-eyebrow">Para buffets</span>
+        <h3>Também funciona como benefício comercial do buffet</h3>
+        <p class="micro">O buffet pode oferecer o Agente Festeiro como uma camada de organização e encantamento para seus clientes, com condições especiais para volume.</p>
+      </div>
+      <div class="buffet-grid">
+        ${buffetScaleOptions.map(option => `
+          <article>
+            <strong>${escapeHtml(option.title)}</strong>
+            <small>${escapeHtml(option.text)}</small>
+          </article>
+        `).join("")}
+      </div>
+    </section>
+  `;
 }
 
 function PackagePlanCard(plan) {
@@ -641,6 +774,9 @@ function ExperiencePreview() {
         ${PreviewEditField("Cores da festa", "preview.colorsText", preview.colorsText)}
         ${PreviewEditArea("Itens escolhidos", "preview.selectedItemsText", preview.selectedItemsText)}
         ${PreviewEditArea("Mensagem para convidados", "preview.guestMessage", preview.guestMessage)}
+        ${PreviewEditArea("Mensagem pronta para WhatsApp", "preview.whatsappMessage", preview.whatsappMessage)}
+        ${PreviewEditArea("Lembrete de confirmação", "preview.rsvpReminder", preview.rsvpReminder)}
+        ${PreviewEditArea("Agradecimento pós-festa", "preview.postPartyMessage", preview.postPartyMessage)}
         ${PreviewEditArea("Roteiro sugerido", "preview.suggestedFlow", preview.suggestedFlow)}
       </div>
     </section>
@@ -1439,7 +1575,11 @@ function normalizeFinalRecommendation(input, baseTheme, quizAnswers, refinementA
     partyFavor: input.partyFavor || fallback.partyFavor,
     costLevel: input.costLevel || fallback.costLevel,
     difficultyLevel: input.difficultyLevel || fallback.difficultyLevel,
-    viabilityNote: input.viabilityNote || fallback.viabilityNote
+    viabilityNote: input.viabilityNote || fallback.viabilityNote,
+    inviteAngle: input.inviteAngle || fallback.inviteAngle,
+    rsvpAngle: input.rsvpAngle || fallback.rsvpAngle,
+    dayPlan: input.dayPlan || fallback.dayPlan,
+    memoryPlan: input.memoryPlan || fallback.memoryPlan
   };
 }
 
@@ -1497,7 +1637,11 @@ function generateFinalRecommendation(baseTheme, quizAnswers = {}, refinementAnsw
     partyFavor: isFootball ? "Medalha simbólica ou tag de campeão." : "Lembrancinha útil com tag personalizada no tema.",
     costLevel: investment.replace("Quero algo ", "") || "Equilibrado",
     difficultyLevel: simplePlace ? "Baixa a média" : "Média",
-    viabilityNote: `Adequado para ${place}. O time deve avaliar prazo, itens especiais e volume de convidados.`
+    viabilityNote: `Adequado para ${place}. O time deve avaliar prazo, itens especiais e volume de convidados.`,
+    inviteAngle: isFootball ? "convite em clima de ingresso para o grande jogo" : `convite acolhedor apresentando o conceito ${conceptName}`,
+    rsvpAngle: simplePlace ? "confirmar presença e orientar chegada, portaria ou espaço" : "confirmar presença e reduzir dúvidas sobre horário, local e presentes",
+    dayPlan: executionPlan,
+    memoryPlan: isEmotional ? "recados, fotos aprovadas e cápsula do tempo para guardar essa fase" : "álbum pós-festa, fotos aprovadas e agradecimento final aos convidados"
   };
 }
 
@@ -1530,6 +1674,9 @@ function generateExperiencePreview(confirmedTheme, quizAnswers, aiPersonalizatio
   const priorities = Array.isArray(refined.priorities) ? refined.priorities : [];
   const selectedItemsText = modules.map(module => module.name).join("\n");
   const invitationText = `Você está convidado para celebrar ${childName || "essa fase especial"} em uma festa com clima de ${themeName}. Confirme sua presença e venha viver esse momento com a família.`;
+  const whatsappMessage = `Oi! Estamos preparando a festa de ${childName || "nossa criança"} e queremos muito contar com você. Acesse o convite, confirme presença e veja as informações principais da comemoração.`;
+  const rsvpReminder = `Passando para lembrar de confirmar presença na festa de ${childName || "nossa criança"}. Isso ajuda muito a família a organizar comida, espaço e lembrancinhas com carinho.`;
+  const postPartyMessage = `Obrigado por fazer parte desse dia especial. Se tiver fotos ou recados carinhosos, envie pelo site para ajudarmos a montar as memórias da festa.`;
 
   return {
     experienceName,
@@ -1543,6 +1690,9 @@ function generateExperiencePreview(confirmedTheme, quizAnswers, aiPersonalizatio
     colorsText: palette.map(color => color.name).join(", "),
     selectedItemsText,
     guestMessage: "Confirme sua presença, envie uma foto especial e deixe um recado carinhoso para a família.",
+    whatsappMessage,
+    rsvpReminder,
+    postPartyMessage,
     suggestedFlow: [
       "Chegada e acolhimento dos convidados",
       "Fotos e brincadeira principal",
@@ -1578,6 +1728,9 @@ function normalizePreview(preview) {
   const selectedItemsText = preview.selectedItemsText || preview.modulesText || "";
   const themeConcept = preview.themeConcept || preview.experienceName || "Tema da festa";
   const invitationText = preview.invitationText || preview.invitationSuggestion || "";
+  const whatsappMessage = preview.whatsappMessage || "Mensagem curta para enviar o convite aos convidados pelo WhatsApp.";
+  const rsvpReminder = preview.rsvpReminder || "Lembrete simpático para pedir confirmação de presença.";
+  const postPartyMessage = preview.postPartyMessage || "Agradecimento pós-festa com convite para enviar fotos e recados.";
   return {
     ...preview,
     paletteText,
@@ -1587,7 +1740,10 @@ function normalizePreview(preview) {
     colorsText,
     selectedItemsText,
     themeConcept,
-    invitationText
+    invitationText,
+    whatsappMessage,
+    rsvpReminder,
+    postPartyMessage
   };
 }
 
@@ -1661,7 +1817,13 @@ function generateDevelopmentBriefing(confirmedTheme, quizAnswers, aiPersonalizat
     `- História da criança: ${preview.childStory}`,
     `- Cores da festa: ${preview.colorsText}`,
     `- Mensagem para convidados: ${preview.guestMessage}`,
+    `- Mensagem pronta para WhatsApp: ${preview.whatsappMessage}`,
+    `- Lembrete de confirmação: ${preview.rsvpReminder}`,
+    `- Agradecimento pós-festa: ${preview.postPartyMessage}`,
     `- Roteiro sugerido: ${String(preview.suggestedFlow || "").replace(/\n/g, " / ")}`,
+    "",
+    "Entregáveis práticos gerados pela IA:",
+    ...aiOperationalOutputs.map(item => `- ${item}`),
     "",
     "Resumo da experiência:",
     preview.conceptSummary,
@@ -1700,6 +1862,7 @@ function generateDevelopmentBriefing(confirmedTheme, quizAnswers, aiPersonalizat
     "- O responsável selecionou os itens acima no assistente.",
     "- Itens essenciais e mais escolhidos podem seguir conforme o plano contratado.",
     "- Experiências especiais precisam de confirmação de viabilidade, prazo e complexidade.",
+    "- A entrega deve usar temas-base, blocos prontos e revisão humana para evitar personalização manual excessiva.",
     "",
     "Pontos de atenção para viabilidade:",
     preview.viabilityNotes,

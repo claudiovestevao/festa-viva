@@ -193,26 +193,30 @@ async function callOpenAIThemeRefine(env, input) {
 }
 
 function systemPrompt() {
-  return `Voce e o Agente Festeiro, um concierge de autosservico para maes e pais criarem sites e convites digitais de festas infantis.
+  return `Voce e o Agente Festeiro, um concierge de autosservico para maes e pais planejarem festas infantis com mais praticidade, menos retrabalho e memorias melhores.
 
 Objetivo:
 - Conversar em portugues do Brasil, com tom acolhedor, pratico e encantador.
 - Fazer uma pergunta curta por vez, aceitando respostas como "nao sei".
 - Quando a pessoa nao souber, sugerir opcoes com base nos interesses da crianca.
-- Coletar dados suficientes para o dev montar um site personalizado em ate 48h.
+- Coletar dados suficientes para o time montar uma experiencia personalizada em ate 48h quando o plano permitir.
+- Reduzir trabalho real dos pais: organizar informacoes, gerar checklist, texto de convite, lembretes, roteiro e briefing.
 - Se o buffet ja pagou, tratar como "enviar para producao"; se nao, tratar como "solicitar orcamento".
 
 Produto:
 - Convite visual personalizado.
 - RSVP por familia com adultos, criancas pagantes, menores de 5 e bebes.
 - Upload de fotos com aprovacao dos pais.
-- Quiz, mural, capsula do tempo, galeria, modo telao e album pos-festa.
+- Quiz, mural, capsula do tempo, galeria, roteiro do dia, ideias de presentes, lembretes e album pos-festa.
 - Pais/admins podem gerenciar aprovacoes.
+- O produto deve funcionar por blocos reaproveitaveis: tema-base, secoes do site, prompts, checklist e mensagens.
 
 Regras:
 - Nunca prometa que o site fica pronto automaticamente. O correto e: "envio para producao em ate 48h".
 - Nao use nomes de personagens protegidos como se fossem licenciados. Use "inspirado no tema" quando apropriado.
 - Sempre mantenha privacidade como vantagem: fotos e mensagens so aparecem depois da aprovacao.
+- Nao seja apenas um gerador de tema. Sempre transforme a ideia em execucao pratica.
+- Ao sugerir experiencias especiais, sinalize que dependem de avaliacao de viabilidade, prazo e complexidade.
 - Gere uma resposta JSON estrita no schema pedido.
 - Atualize o briefing a cada resposta.
 - O preview deve ficar cada vez mais especifico conforme a conversa evolui.`;
@@ -237,6 +241,7 @@ Tarefa:
 - Evitar depender de personagem licenciado; quando necessario, sugerir uma direcao inspirada, nao oficial.
 - Nao sugerir ideias mirabolantes.
 - Retornar uma unica recomendacao final com conceito, execucao, prioridades e alertas praticos.
+- Incluir angulo de convite, logica de RSVP, plano do dia e plano de memorias quando o schema permitir.
 
 Responda somente no JSON do schema.`;
 }
@@ -281,12 +286,15 @@ function responseSchema() {
       preview: {
         type: "object",
         additionalProperties: false,
-        required: ["siteTitle", "subtitle", "inviteText", "whatsappMessage", "visualDirection", "suggestedSections", "quizQuestions", "capsulePrompt", "productionSummary"],
+        required: ["siteTitle", "subtitle", "inviteText", "whatsappMessage", "rsvpReminder", "dayTimeline", "checklistItems", "visualDirection", "suggestedSections", "quizQuestions", "capsulePrompt", "productionSummary"],
         properties: {
           siteTitle: { type: "string" },
           subtitle: { type: "string" },
           inviteText: { type: "string" },
           whatsappMessage: { type: "string" },
+          rsvpReminder: { type: "string" },
+          dayTimeline: { type: "array", items: { type: "string" }, maxItems: 8 },
+          checklistItems: { type: "array", items: { type: "string" }, maxItems: 10 },
           visualDirection: { type: "string" },
           suggestedSections: { type: "array", items: { type: "string" } },
           quizQuestions: { type: "array", items: { type: "string" } },
@@ -307,7 +315,7 @@ function themeRefineSchema() {
       recommendation: {
         type: "object",
         additionalProperties: false,
-        required: ["conceptName", "whyFits", "executionPlan", "priorities", "avoid", "palette", "decorIdea", "guestInteraction", "partyFavor", "costLevel", "difficultyLevel", "viabilityNote"],
+        required: ["conceptName", "whyFits", "executionPlan", "priorities", "avoid", "palette", "decorIdea", "guestInteraction", "partyFavor", "costLevel", "difficultyLevel", "viabilityNote", "inviteAngle", "rsvpAngle", "dayPlan", "memoryPlan"],
         properties: {
           conceptName: { type: "string" },
           whyFits: { type: "string" },
@@ -320,7 +328,11 @@ function themeRefineSchema() {
           partyFavor: { type: "string" },
           costLevel: { type: "string" },
           difficultyLevel: { type: "string" },
-          viabilityNote: { type: "string" }
+          viabilityNote: { type: "string" },
+          inviteAngle: { type: "string" },
+          rsvpAngle: { type: "string" },
+          dayPlan: { type: "string" },
+          memoryPlan: { type: "string" }
         }
       }
     }

@@ -2,6 +2,17 @@
 
 Assistente mobile-first para pais e maes planejarem uma festa especial com praticidade, escolherem ou refinarem o tema e enviarem os dados confirmados para criacao ou avaliacao do time.
 
+## Tese do produto
+
+O Agente Festeiro nao deve competir como "convite digital simples". Ele combina planejamento, informacoes para convidados e memorias da festa em uma experiencia modular.
+
+Mitigacoes principais:
+
+- Personalizacao manual demais: usar temas-base, blocos prontos, prompts reaproveitaveis e revisao humana focada.
+- IA como enfeite: gerar entregaveis praticos como convite, checklist, mensagens, lembretes, roteiro, quiz e briefing.
+- Preco baixo demais: manter plano de entrada e concentrar margem em planos completos, experiencias especiais e pacotes recorrentes para buffets.
+- Concorrencia de convite digital: vender experiencia da festa antes, durante e depois, nao apenas um link com RSVP.
+
 Fluxo:
 
 1. Tela inicial minimalista com CTA para comecar.

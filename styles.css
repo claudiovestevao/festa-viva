@@ -109,6 +109,25 @@ p {
   line-height: 1.45;
 }
 
+.value-strip {
+  display: grid;
+  gap: 8px;
+  margin: 18px 0 10px;
+}
+
+.value-strip span {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 11px 12px;
+  background: #fff;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+.value-strip strong {
+  color: var(--pink-dark);
+}
+
 .home-options {
   display: grid;
   gap: 10px;
@@ -603,6 +622,95 @@ p {
   margin: 0;
   color: var(--muted);
   line-height: 1.45;
+}
+
+.engine-panel,
+.output-panel,
+.buffet-panel,
+.ops-panel {
+  display: grid;
+  gap: 14px;
+  margin: 14px 0;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 16px;
+  background: rgba(255, 255, 255, .9);
+  box-shadow: 0 10px 26px rgba(92, 35, 66, .055);
+}
+
+.engine-panel h3,
+.output-panel h3,
+.buffet-panel h3,
+.ops-panel h3 {
+  margin: 6px 0;
+  font-size: 22px;
+  line-height: 1.05;
+}
+
+.engine-panel p,
+.output-panel p,
+.buffet-panel p {
+  margin-bottom: 0;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.engine-grid,
+.buffet-grid,
+.output-grid {
+  display: grid;
+  gap: 9px;
+}
+
+.engine-grid article,
+.buffet-grid article {
+  display: grid;
+  gap: 5px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 12px;
+  background: #fff;
+}
+
+.engine-grid strong,
+.buffet-grid strong {
+  color: var(--ink);
+  line-height: 1.15;
+}
+
+.engine-grid small,
+.buffet-grid small {
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+.output-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.output-grid span {
+  border: 1px solid #f0ccdc;
+  border-radius: 999px;
+  padding: 9px 11px;
+  background: #fff8fb;
+  color: #7a4260;
+  font-size: 12px;
+  font-weight: 900;
+  text-align: center;
+}
+
+.output-grid.compact {
+  grid-template-columns: 1fr;
+}
+
+.output-grid.compact span {
+  border-radius: 12px;
+  text-align: left;
+}
+
+.buffet-panel.compact {
+  margin-top: 12px;
+  background: linear-gradient(135deg, #fff, #eef8f3);
 }
 
 .pix-box {
@@ -1265,6 +1373,24 @@ p {
   }
 
   .demo-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .value-strip,
+  .engine-grid,
+  .buffet-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .engine-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .output-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .output-grid.compact {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
